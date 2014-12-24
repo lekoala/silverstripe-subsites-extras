@@ -1,0 +1,22 @@
+---
+Name: subsite-extras
+After: 
+- 'subsites/*'
+Only:
+  classexists: 'Subsite'
+---
+Director:
+  rules:
+    'admin/security/autocomplete/$ID': 'SubsiteSecurityAutocompleter'
+SubsiteExtension:
+  admin_default_permissions:
+    ['CMS_ACCESS_CMSMain','CMS_ACCESS_AssetAdmin','EDIT_SITECONFIG', 'SITETREE_VIEW_ALL', 'SITETREE_EDIT_ALL','VIEW_DRAFT_CONTENT']
+Subsite:
+  extensions:
+    - SubsiteExtension
+Security:
+  extensions:
+    - SubsiteLoginExtension
+SubsiteAdmin:
+  extensions:
+    - SubsiteAdminExtension
