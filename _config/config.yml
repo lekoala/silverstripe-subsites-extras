@@ -20,3 +20,6 @@ Security:
 SubsiteAdmin:
   extensions:
     - SubsiteAdminExtension
+AssetAdmin:
+  extensions:
+    - SubsiteAssetAdminExtension
