@@ -31,14 +31,14 @@ class SubsiteExtension extends DataExtension
         if (isset($changes['Title']) && !empty($changes['Title']['before'])) {
             $filter    = new URLSegmentFilter();
             $groupName = $this->getAdministratorGroupName($changes['Title']['before']);
-            $group     = $this->getGroupByName($groupName);
+            $group     = self::getGroupByName($groupName);
             if ($group) {
                 $group->Title = $this->getAdministratorGroupName($changes['Title']['after']);
                 $group->Code  = $filter->filter($group->Title);
                 $group->write();
             }
             $membersGroupName = $this->getMembersGroupName($changes['Title']['before']);
-            $membersGroup     = $this->getGroupByName($membersGroupName);
+            $membersGroup     = self::getGroupByName($membersGroupName);
             if ($membersGroup) {
                 $membersGroup->Title = $this->getMembersGroupName($changes['Title']['after']);
                 $membersGroup->Code  = $filter->filter($membersGroup->Title);
@@ -68,7 +68,7 @@ class SubsiteExtension extends DataExtension
 
         // Make sure we have groups for this subsite
         $groupName = $this->getAdministratorGroupName();
-        $group     = $this->getGroupByName($groupName);
+        $group     = self::getGroupByName($groupName);
         if ($groupName && !$group) {
             $group                    = new Group();
             $group->Title             = $groupName;
@@ -93,7 +93,7 @@ class SubsiteExtension extends DataExtension
         }
 
         $membersGroupName = $this->getMembersGroupName();
-        $membersGroup     = $this->getGroupByName($membersGroupName);
+        $membersGroup     = self::getGroupByName($membersGroupName);
         if ($membersGroupName && !$membersGroup) {
             $membersGroup        = new Group();
             $membersGroup->Title = $membersGroupName;
@@ -113,7 +113,7 @@ class SubsiteExtension extends DataExtension
      * @param string $name
      * @return Group
      */
-    function getGroupByName($name)
+    static function getGroupByName($name)
     {
         if (!$name) {
             return false;
