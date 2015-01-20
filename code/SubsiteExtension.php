@@ -25,6 +25,26 @@ class SubsiteExtension extends DataExtension
             $this->owner->BaseFolder = str_replace(' ', '',
                 ucwords(str_replace('-', ' ', $this->owner->BaseFolder)));
         }
+
+        // If name has changed, rename existing groups
+        $changes = $this->owner->getChangedFields();
+        if (isset($changes['Title']) && !empty($changes['Title']['before'])) {
+            $filter    = new URLSegmentFilter();
+            $groupName = $this->getAdministratorGroupName($changes['Title']['before']);
+            $group     = $this->getGroupByName($groupName);
+            if ($group) {
+                $group->Title = $this->getAdministratorGroupName($changes['Title']['after']);
+                $group->Code  = $filter->filter($group->Title);
+                $group->write();
+            }
+            $membersGroupName = $this->getMembersGroupName($changes['Title']['before']);
+            $membersGroup     = $this->getGroupByName($membersGroupName);
+            if ($membersGroup) {
+                $membersGroup->Title = $this->getMembersGroupName($changes['Title']['after']);
+                $membersGroup->Code  = $filter->filter($membersGroup->Title);
+                $membersGroup->write();
+            }
+        }
     }
 
     function onAfterWrite()
@@ -46,10 +66,10 @@ class SubsiteExtension extends DataExtension
             }
         }
 
-        // Make sure we have a group for this subsite
-        $groupName  = $this->getAdministratorGroupName();
-        $groupCount = DB::query('SELECT * FROM Group_Subsites WHERE SubsiteID = '.$this->owner->ID)->numRecords();
-        if (!$groupCount) {
+        // Make sure we have groups for this subsite
+        $groupName = $this->getAdministratorGroupName();
+        $group     = $this->getGroupByName($groupName);
+        if ($groupName && !$group) {
             $group                    = new Group();
             $group->Title             = $groupName;
             $group->AccessAllSubsites = true;
@@ -71,6 +91,17 @@ class SubsiteExtension extends DataExtension
 
             $group->write();
         }
+
+        $membersGroupName = $this->getMembersGroupName();
+        $membersGroup     = $this->getGroupByName($membersGroupName);
+        if ($membersGroupName && !$membersGroup) {
+            $membersGroup        = new Group();
+            $membersGroup->Title = $membersGroupName;
+            $membersGroup->write();
+
+            $membersGroup->Subsites()->add($this->owner);
+            $membersGroup->write();
+        }
     }
 
     function updateCMSFields(\FieldList $fields)
@@ -79,13 +110,50 @@ class SubsiteExtension extends DataExtension
     }
 
     /**
+     * @param string $name
+     * @return Group
+     */
+    function getGroupByName($name)
+    {
+        if (!$name) {
+            return false;
+        }
+        $urlfilter = new URLSegmentFilter;
+        return Group::get()->filter('Code', $urlfilter->filter($name))->first();
+    }
+
+    /**
      * Get the administrator group name based on subsite Title
-     * 
+     *
+     * @param string $title
      * @return string
      */
-    function getAdministratorGroupName()
+    function getAdministratorGroupName($title = null)
     {
-        return 'Administrators '.$this->owner->Title;
+        if ($title === null) {
+            $title = $this->owner->Title;
+        }
+        if (!$title) {
+            return;
+        }
+        return 'Administrators '.$title;
+    }
+
+    /**
+     * Get the members group name based on subsite Title
+     *
+     * @param string $title
+     * @return string
+     */
+    function getMembersGroupName($title = null)
+    {
+        if ($title === null) {
+            $title = $this->owner->Title;
+        }
+        if (!$title) {
+            return;
+        }
+        return 'Members '.$title;
     }
 
     /**
