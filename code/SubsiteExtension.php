@@ -20,7 +20,7 @@ class SubsiteExtension extends DataExtension
 
         // Create the base folder
         if (!$this->owner->BaseFolder && $this->owner->Title) {
-            $filter                  = new URLSegmentFilter();
+            $filter                  = new FileNameFilter();
             $this->owner->BaseFolder = $filter->filter($this->owner->getTitle());
             $this->owner->BaseFolder = str_replace(' ', '',
                 ucwords(str_replace('-', ' ', $this->owner->BaseFolder)));

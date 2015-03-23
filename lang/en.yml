@@ -1,0 +1,12 @@
+en:
+  AssetAdmin:
+    CREATED: Date
+    SIZE: Size
+  FileSubsites:
+    AllSitesDropdownOpt: 'All sites'
+    SubsiteFieldLabel: Subsite
+  Subsite:
+    SiteConfigSubtitle: 'Your tagline here'
+    SiteConfigTitle: 'Your Site Name'
+  SubsiteFileExtension:
+    ShowInSubsites: 'Show in subsites'
