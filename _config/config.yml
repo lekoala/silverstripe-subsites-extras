@@ -31,3 +31,6 @@ Only:
 SiteTree:
   extensions:
     - FluentSiteTreeSubsiteFix
+LeftAndMain:
+  extensions:
+    - FluentLeftAndMainSubsite
