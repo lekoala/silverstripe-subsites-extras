@@ -1,6 +1,7 @@
 ---
 Name: subsite-extras
 After: 
+- 'fluent/*'
 - 'subsites/*'
 Only:
   classexists: 'Subsite'
@@ -23,3 +24,10 @@ SubsiteAdmin:
 AssetAdmin:
   extensions:
     - SubsiteAssetAdminExtension
+---
+Only:
+  classexists: 'Fluent'
+---
+SiteTree:
+  extensions:
+    - FluentSiteTreeSubsiteFix
