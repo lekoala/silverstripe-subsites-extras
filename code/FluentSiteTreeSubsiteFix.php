@@ -44,6 +44,11 @@ class SiteTreeURLSegmentFieldFixed extends SiteTreeURLSegmentField
 {
     protected $cannot_set_prefix = false;
 
+    public function getCannotSetPrefix()
+    {
+        return $this->cannot_set_prefix;
+    }
+
     public function setCannotSetPrefix($v)
     {
         $this->cannot_set_prefix = $v;
