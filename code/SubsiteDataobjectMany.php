@@ -159,7 +159,7 @@ class SubsiteDataobjectMany extends DataExtension
 
         // Find the sites that this user has access to
         if ($member->ID == Member::currentUserID()) {
-            $goodSites = DataObjectSubsites::accessible_sites_ids();
+            $goodSites = SubsiteDataobject::accessible_sites_ids();
         } else {
             $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true,
                     'all', $member)->column('ID');
