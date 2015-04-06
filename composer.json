@@ -15,6 +15,9 @@
 				"silverstripe/framework": "~3.1",
 				"silverstripe/subsites": "*"
 			},
+	"suggest": {
+		"lekoala/devtoolkit": "Provides the ActiveLocales extension for Fluent"
+	},
 	"extra": {
 		"installer-name": "subsites-extras"
 	}

@@ -8,6 +8,7 @@ Silverstripe Subsite Extras module
 - Fix autocompleter in security section
 - Properly prefix Folders with a * for global folders (main & subsites)
 - Define a base folder for the subsite to store subsite specific assets
+- Improve Fluent language selector
 
 Compatibility
 =============
