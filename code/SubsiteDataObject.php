@@ -5,7 +5,7 @@
  *
  * @author lekoala
  */
-class SubsiteDataobject extends DataExtension
+class SubsiteDataObject extends DataExtension
 {
     private static $_accessible_sites_map_cache = null;
     private static $has_one                     = array(
