@@ -5,7 +5,7 @@
  *
  * Don't forget to add $belongs_many_many on the subsite as well through an extension
  */
-class SubsiteDataobjectMany extends DataExtension
+class SubsiteDataObjectMany extends DataExtension
 {
     private static $_accessible_sites_map_cache = null;
     private static $db                          = array(
