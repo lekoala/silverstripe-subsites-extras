@@ -44,7 +44,7 @@ class SubsiteFileExtension extends DataExtension
         if ($ctrl->getAction() !== 'EditForm') {
             return;
         }
-        
+
         if ($this->owner instanceof Folder) {
             // Allow to move folders from one site to another
             $sites     = Subsite::accessible_sites('CMS_ACCESS_AssetAdmin');
@@ -109,9 +109,11 @@ class SubsiteFileExtension extends DataExtension
     function canView()
     {
         // This is required, otherwise the whole list is not displayed
-        if ($this->owner->ID && Subsite::currentSubsiteID()) {
-            if ($this->owner->SubsiteID == 0 && !$this->owner->ShowInSubsites) {
-                return false;
+        if (Controller::curr() instanceof LeftAndMain) {
+            if ($this->owner->ID && Subsite::currentSubsiteID()) {
+                if ($this->owner->SubsiteID == 0 && !$this->owner->ShowInSubsites) {
+                    return false;
+                }
             }
         }
     }
