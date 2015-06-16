@@ -38,7 +38,14 @@ class SubsiteFileExtension extends DataExtension
      */
     function updateCMSFields(FieldList $fields)
     {
-        $ctrl = Controller::curr();
+        $ctrl = null;
+        if (Controller::has_curr()) {
+            $ctrl = Controller::curr();
+        }
+
+        if (!$ctrl) {
+            return;
+        }
 
         // This fixes fields showing up for no reason in the list view (not moved to Details tab)
         if ($ctrl->getAction() !== 'EditForm') {

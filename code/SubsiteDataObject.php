@@ -30,9 +30,14 @@ class SubsiteDataObject extends DataExtension
      */
     function augmentSQL(SQLQuery &$query, DataQuery &$dataQuery = null)
     {
+        $ctrl = null;
+        if(Controller::has_curr()) {
+            $ctrl = Controller::curr();
+        }
+
         if (Subsite::$disable_subsite_filter) return;
         if ($dataQuery->getQueryParam('Subsite.filter') === false) return;
-        if (get_class(Controller::curr()) == 'Security') return;
+        if ($ctrl && get_class(Controller::curr()) == 'Security') return;
 
         // Don't run on delete queries, since they are always tied to
         // a specific ID.
