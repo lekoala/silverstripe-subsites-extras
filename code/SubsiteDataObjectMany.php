@@ -85,11 +85,7 @@ class SubsiteDataObjectMany extends DataExtension
         }
     }
 
-    function onBeforeWrite()
-    {
-        parent::onBeforeWrite();
-
-        //build the list
+    function buildSubsiteList() {
         $list = '';
         foreach ($this->owner->Subsites() as $sub) {
             if (!is_object($sub)) {
@@ -98,6 +94,14 @@ class SubsiteDataObjectMany extends DataExtension
             $list .= '#'.$sub->ID.',';
         }
         $this->owner->SubsiteList = $list;
+
+        return $list;
+    }
+
+    function onBeforeWrite()
+    {
+        parent::onBeforeWrite();
+        $this->buildSubsiteList();
     }
 
     function onAfterWrite()
@@ -201,6 +205,28 @@ class SubsiteDataObjectMany extends DataExtension
         if (!$member && $member !== FALSE) $member = Member::currentUser();
 
         return $this->canEdit($member);
+    }
+
+    /**
+     * Gets all classes with this extension
+     *
+     * @return array of classes to migrate
+     */
+    public static function extendedClasses()
+    {
+        $classes     = array();
+        $dataClasses = ClassInfo::subclassesFor('DataObject');
+        array_shift($dataClasses);
+        foreach ($dataClasses as $class) {
+            $base = ClassInfo::baseDataClass($class);
+            foreach (Object::get_extensions($base) as $extension) {
+                if (is_a($extension, __CLASS__, true)) {
+                    $classes[] = $base;
+                    break;
+                }
+            }
+        }
+        return array_unique($classes);
     }
 
     function alternateAbsoluteLink()
