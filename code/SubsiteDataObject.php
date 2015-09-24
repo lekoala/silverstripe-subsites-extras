@@ -31,7 +31,7 @@ class SubsiteDataObject extends DataExtension
     function augmentSQL(SQLQuery &$query, DataQuery &$dataQuery = null)
     {
         $ctrl = null;
-        if(Controller::has_curr()) {
+        if (Controller::has_curr()) {
             $ctrl = Controller::curr();
         }
 
@@ -76,7 +76,7 @@ class SubsiteDataObject extends DataExtension
         if (!$refresh && self::$_accessible_sites_map_cache) {
             return self::$_accessible_sites_map_cache;
         }
-        $subsites    = Subsite::accessible_sites("CMS_ACCESS_CMSMain");
+        $subsites    = Subsite::accessible_sites("CMS_ACCESS");
         $subsitesMap = array();
         if ($subsites && $subsites->Count()) {
             $subsitesMap = $subsites->map('ID', 'Title');
@@ -102,7 +102,7 @@ class SubsiteDataObject extends DataExtension
 
     function updateCMSFields(FieldList $fields)
     {
-        $subsites    = Subsite::accessible_sites("CMS_ACCESS_CMSMain");
+        $subsites    = Subsite::accessible_sites("CMS_ACCESS");
         $subsitesMap = array();
         if ($subsites && $subsites->Count()) {
             $subsitesMap = $subsites->map('ID', 'Title');
@@ -144,16 +144,6 @@ class SubsiteDataObject extends DataExtension
      */
     function canEdit($member = null)
     {
-        if (!$member) $member = Member::currentUser();
-
-        // Find the sites that this user has access to
-        if ($member->ID == Member::currentUserID()) {
-            $goodSites = self::accessible_sites_ids();
-        } else {
-            $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true,
-                    'all', $member)->column('ID');
-        }
-
         if (!is_null($this->owner->SubsiteID)) {
             $subsiteID = $this->owner->SubsiteID;
         } else {
@@ -163,6 +153,21 @@ class SubsiteDataObject extends DataExtension
 			// We do the second best: fetch the likely SubsiteID from the session. The drawback is this might
             // make it possible to force relations to point to other (forbidden) subsites.
             $subsiteID = Subsite::currentSubsiteID();
+        }
+
+        // If no subsite ID is defined, let dataobject determine the permission
+        if (!$subsiteID) {
+            return null;
+        }
+
+        if (!$member) $member = Member::currentUser();
+
+        // Find the sites that this user has access to
+        if ($member->ID == Member::currentUserID()) {
+            $goodSites = self::accessible_sites_ids();
+        } else {
+            $goodSites = Subsite::accessible_sites('CMS_ACCESS', true, 'all',
+                    $member)->column('ID');
         }
 
         // Return true if they have access to this object's site
