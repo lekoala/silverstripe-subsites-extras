@@ -117,6 +117,9 @@ class SubsiteDataObject extends DataExtension
                     new DropdownField('SubsiteID', 'Subsite', $subsitesMap));
             }
         }
+
+        // Profile integration
+        SubsiteProfile::applyToFields($this->owner, $fields);
     }
 
     function alternateSiteConfig()

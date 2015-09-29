@@ -9,7 +9,8 @@
 class SubsiteExtension extends DataExtension
 {
     private static $db                        = array(
-        'BaseFolder' => 'Varchar(50)'
+        'BaseFolder' => 'Varchar(50)',
+        'Profile' => 'Varchar(50)'
     );
     private static $admin_default_permissions = array();
     private static $_current_siteconfig_cache = array();
@@ -70,8 +71,8 @@ class SubsiteExtension extends DataExtension
         $groupName = $this->getAdministratorGroupName();
         $group     = self::getGroupByName($groupName);
         if ($groupName && !$group) {
-            $group                    = new Group();
-            $group->Title             = $groupName;
+            $group        = new Group();
+            $group->Title = $groupName;
             $group->write();
 
             $group->Subsites()->add($this->owner);
@@ -105,7 +106,58 @@ class SubsiteExtension extends DataExtension
 
     function updateCMSFields(\FieldList $fields)
     {
-        $fields->addFieldToTab('Root.Configuration', new TextField('BaseFolder'));
+        $fields->addFieldToTab('Root.Configuration',
+            new TextField('BaseFolder',
+            _t('SubsiteExtra.BaseFolder', 'Base folder')));
+
+        // Profiles
+        $profiles = ClassInfo::subclassesFor('SubsiteProfile');
+        array_shift($profiles);
+        if (!empty($profiles)) {
+            $profiles = array('' => '') + $profiles;
+            $fields->insertAfter(new DropdownField('Profile',
+                _t('SubsiteExtra.SubsiteProfile', 'Subsite profile'), $profiles),
+                'Title');
+        }
+
+        // Better gridfield
+        if (class_exists('GridFieldEditableColumns')) {
+            $DomainsGridField = GridFieldConfig::create()
+                ->addComponent(new GridFieldButtonRow('before'))
+                ->addComponent(new GridFieldTitleHeader())
+                ->addComponent($editableCols     = new GridFieldEditableColumns())
+                ->addComponent(new GridFieldDeleteAction())
+                ->addComponent($addNew           = new GridFieldAddNewInlineButton())
+            ;
+            $addNew->setTitle(_t('SubsitesExtra.ADD_NEW', "Add a new subdomain"));
+
+            $editableColsFields              = array();
+            $editableColsFields['IsPrimary'] = array(
+                'title' => _t('SubsiteExtra.IS_PRIMARY', 'Is Primary'),
+                'callback' => function($record, $column, $grid) {
+                    $field = new CheckboxField($column);
+                    return $field;
+                }
+            );
+            $editableColsFields['Domain'] = array(
+                'title' => _t('SubsitesExtra.TITLE', "Domain"),
+                'callback' => function($record, $column, $grid) {
+                    $field = new TextField($column);
+                    $field->setAttribute('placeholder', 'mydomain.ext');
+                    return $field;
+                }
+            );
+
+            $editableCols->setDisplayFields($editableColsFields);
+
+            $DomainsGridField = new GridField("Domains",
+                _t('Subsite.DomainsListTitle', "Domains"),
+                $this->owner->Domains(), $DomainsGridField);
+
+            if ($fields->dataFieldByName('Domains')) {
+                $fields->replaceField('Domains', $DomainsGridField);
+            }
+        }
     }
 
     /**

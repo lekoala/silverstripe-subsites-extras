@@ -24,13 +24,6 @@ SubsiteAdmin:
 AssetAdmin:
   extensions:
     - SubsiteAssetAdminExtension
----
-Only:
-  classexists: 'Fluent'
----
-SiteTree:
-  extensions:
-    - FluentSiteTreeSubsiteFix
 LeftAndMain:
   extensions:
-    - FluentLeftAndMainSubsite
+    - LeftAndMainSubsiteExtension

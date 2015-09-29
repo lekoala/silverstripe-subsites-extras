@@ -115,6 +115,7 @@ class SubsiteDataObjectMany extends DataExtension
         if (!$this->owner->ID) {
             return;
         }
+
         $accessibleSubsites    = Subsite::accessible_sites("CMS_ACCESS");
         $accessibleSubsitesMap = array();
         if ($accessibleSubsites && $accessibleSubsites->Count()) {
@@ -138,6 +139,9 @@ class SubsiteDataObjectMany extends DataExtension
             $fields->addFieldToTab('Root.Subsites',
                 new ReadonlyField('SubsiteList'));
         }
+
+        // Profile integration
+        SubsiteProfile::applyToFields($this->owner, $fields);
     }
 
     function alternateSiteConfig()
@@ -169,7 +173,7 @@ class SubsiteDataObjectMany extends DataExtension
         if (!$this->owner->SubsiteList && !Subsite::currentSubsiteID()) {
             return null;
         }
-        
+
         if ($this->owner->SubsiteList) {
             $subsiteIDs = $this->listSubsiteIDs();
         } else {
