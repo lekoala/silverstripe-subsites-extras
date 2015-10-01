@@ -116,7 +116,7 @@ class SubsiteDataObjectMany extends DataExtension
             return;
         }
 
-        $accessibleSubsites    = Subsite::accessible_sites("CMS_ACCESS");
+        $accessibleSubsites    = Subsite::accessible_sites("CMS_ACCESS_CMSMain");
         $accessibleSubsitesMap = array();
         if ($accessibleSubsites && $accessibleSubsites->Count()) {
             $accessibleSubsitesMap = $accessibleSubsites->map('ID', 'Title');
@@ -191,9 +191,10 @@ class SubsiteDataObjectMany extends DataExtension
         if ($member->ID == Member::currentUserID()) {
             $goodSites = SubsiteDataObject::accessible_sites_ids();
         } else {
-            $goodSites = Subsite::accessible_sites('CMS_ACCESS', true, 'all',
+            $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true, 'all',
                     $member)->column('ID');
         }
+
 
         // Return true if they have access to this object's site
         if (in_array(0, $goodSites)) {

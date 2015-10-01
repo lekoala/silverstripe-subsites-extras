@@ -76,7 +76,7 @@ class SubsiteDataObject extends DataExtension
         if (!$refresh && self::$_accessible_sites_map_cache) {
             return self::$_accessible_sites_map_cache;
         }
-        $subsites    = Subsite::accessible_sites("CMS_ACCESS");
+        $subsites    = Subsite::accessible_sites("CMS_ACCESS_CMSMain");
         $subsitesMap = array();
         if ($subsites && $subsites->Count()) {
             $subsitesMap = $subsites->map('ID', 'Title');
@@ -102,7 +102,7 @@ class SubsiteDataObject extends DataExtension
 
     function updateCMSFields(FieldList $fields)
     {
-        $subsites    = Subsite::accessible_sites("CMS_ACCESS");
+        $subsites    = Subsite::accessible_sites("CMS_ACCESS_CMSMain");
         $subsitesMap = array();
         if ($subsites && $subsites->Count()) {
             $subsitesMap = $subsites->map('ID', 'Title');
@@ -169,7 +169,7 @@ class SubsiteDataObject extends DataExtension
         if ($member->ID == Member::currentUserID()) {
             $goodSites = self::accessible_sites_ids();
         } else {
-            $goodSites = Subsite::accessible_sites('CMS_ACCESS', true, 'all',
+            $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true, 'all',
                     $member)->column('ID');
         }
 
