@@ -43,9 +43,19 @@ EOT
         );
     }
 
+    /**
+     * Replace requirement with something that reset properly current page
+     */
+    public function fix_subsite_dropdown()
+    {
+        Requirements::block('subsites/javascript/LeftAndMain_Subsites.js');
+        Requirements::javascript('subsites-extras/javascript/LeftAndMain_Subsites_Fix.js');
+    }
+
     public function init()
     {
-        self::fix_fluent_menu();
+        $this->fix_fluent_menu();
+        $this->fix_subsite_dropdown();
         SubsiteProfile::enable();
     }
 }
