@@ -71,8 +71,9 @@ class SubsiteExtension extends DataExtension
         $groupName = $this->getAdministratorGroupName();
         $group     = self::getGroupByName($groupName);
         if ($groupName && !$group) {
-            $group        = new Group();
-            $group->Title = $groupName;
+            $group                    = new Group();
+            $group->Title             = $groupName;
+            $group->AccessAllSubsites = false;
             $group->write();
 
             $group->Subsites()->add($this->owner);
@@ -95,8 +96,9 @@ class SubsiteExtension extends DataExtension
         $membersGroupName = $this->getMembersGroupName();
         $membersGroup     = self::getGroupByName($membersGroupName);
         if ($membersGroupName && !$membersGroup) {
-            $membersGroup        = new Group();
-            $membersGroup->Title = $membersGroupName;
+            $membersGroup                    = new Group();
+            $membersGroup->Title             = $membersGroupName;
+            $membersGroup->AccessAllSubsites = false;
             $membersGroup->write();
 
             $membersGroup->Subsites()->add($this->owner);
