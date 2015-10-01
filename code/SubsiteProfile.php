@@ -34,6 +34,16 @@ class SubsiteProfile
 
     }
 
+    protected static function change_field_title($fields,$fieldName,$title,$tooltip = '') {
+        $f = $fields->dataFieldByName($fieldName);
+        if($f) {
+            $f->setTitle($title);
+            if($tooltip) {
+                $f->setTooltip($tooltip);
+            }
+        }
+    }
+
     protected static function enable_custom_translations()
     {
         $locale      = i18n::get_lang_from_locale(i18n::get_locale());
