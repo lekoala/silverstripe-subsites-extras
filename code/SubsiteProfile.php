@@ -34,11 +34,13 @@ class SubsiteProfile
 
     }
 
-    protected static function change_field_title($fields,$fieldName,$title,$tooltip = '') {
+    protected static function change_field_title($fields, $fieldName, $title,
+                                                 $tooltip = '')
+    {
         $f = $fields->dataFieldByName($fieldName);
-        if($f) {
+        if ($f) {
             $f->setTitle($title);
-            if($tooltip) {
+            if ($tooltip) {
                 $f->setTooltip($tooltip);
             }
         }
@@ -46,15 +48,21 @@ class SubsiteProfile
 
     protected static function enable_custom_translations()
     {
-        $locale      = i18n::get_lang_from_locale(i18n::get_locale());
+        $locale      = i18n::get_locale();
+        $lang        = i18n::get_lang_from_locale($locale);
         $profileDir  = self::getProfileDir();
         $translators = array_reverse(i18n::get_translators(), true);
+
+        // Make sure to include base translations
+        i18n::include_by_locale($lang);
+
         foreach ($translators as $priority => $translators) {
             foreach ($translators as $name => $translator) {
+                /* @var $adapter Zend_Translate_Adapter */
                 $adapter = $translator->getAdapter();
-
+                
                 // Load translations from profile
-                $filename = $adapter->getFilenameForLocale($locale);
+                $filename = $adapter->getFilenameForLocale($lang);
                 $filepath = Director::baseFolder()."/mysite/lang/".$profileDir.'/'.$filename;
 
                 if ($filename && !file_exists($filepath)) continue;
