@@ -67,7 +67,7 @@ class SubsiteProfile
 
                 if ($filename && !file_exists($filepath)) continue;
                 $adapter->addTranslation(
-                    array('content' => $filepath, 'locale' => $locale)
+                    array('content' => $filepath, 'locale' => $lang)
                 );
             }
         }
