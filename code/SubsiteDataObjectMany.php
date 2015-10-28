@@ -170,7 +170,7 @@ class SubsiteDataObjectMany extends DataExtension
     function canEdit($member = null)
     {
         // If no subsite ID is defined, let dataobject determine the permission
-        if (!$this->owner->SubsiteList && !Subsite::currentSubsiteID()) {
+        if (!$this->owner->SubsiteList || !Subsite::currentSubsiteID()) {
             return null;
         }
 

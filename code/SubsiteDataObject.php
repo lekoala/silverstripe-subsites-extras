@@ -147,6 +147,11 @@ class SubsiteDataObject extends DataExtension
      */
     function canEdit($member = null)
     {
+        // If no subsite ID is defined, let dataobject determine the permission
+        if (!$this->owner->SubsiteID || !Subsite::currentSubsiteID()) {
+            return null;
+        }
+
         if (!is_null($this->owner->SubsiteID)) {
             $subsiteID = $this->owner->SubsiteID;
         } else {
@@ -169,8 +174,8 @@ class SubsiteDataObject extends DataExtension
         if ($member->ID == Member::currentUserID()) {
             $goodSites = self::accessible_sites_ids();
         } else {
-            $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true, 'all',
-                    $member)->column('ID');
+            $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true,
+                    'all', $member)->column('ID');
         }
 
         // Return true if they have access to this object's site
