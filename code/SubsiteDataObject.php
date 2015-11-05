@@ -3,11 +3,18 @@
 /**
  * Extension for the DataObject object to add subsites support
  *
+ * All objects are visible on main site by default, except if HideOnMainSite is checked
+ * Please note this applies to ModelAdmin as well (you need to filter things if you want
+ * to display only records in the main site)
+ *
  * @author lekoala
  */
 class SubsiteDataObject extends DataExtension
 {
     private static $_accessible_sites_map_cache = null;
+    private static $db = array(
+        'HideOnMainSite' => 'Boolean',
+    );
     private static $has_one                     = array(
         'Subsite' => 'Subsite',
     );
@@ -58,7 +65,7 @@ class SubsiteDataObject extends DataExtension
             $tableName = array_shift($froms);
 
             if ($subsiteID != 0) {
-                $query->addWhere("\"$tableName\".\"SubsiteID\" IN ($subsiteID)");
+                $query->addWhere("\"$tableName\".\"SubsiteID\" IN ($subsiteID) AND \"$tableName\".\"HideOnMainSite\" = 0");
             }
         }
     }
@@ -110,11 +117,12 @@ class SubsiteDataObject extends DataExtension
         }
         if (Subsite::currentSubsiteID()) {
             $fields->removeByName('SubsiteID');
+            $fields->addFieldToTab('Root.Main', new CheckboxField('HideOnMainSite',_t('SubsitesExtra.HideOnMainSite','Hide on main site')));
         } else {
             $field = $fields->dataFieldByName('SubsiteID');
             if (!$field) {
                 $fields->addFieldToTab('Root.Subsite',
-                    new DropdownField('SubsiteID', 'Subsite', $subsitesMap));
+                    new DropdownField('SubsiteID', _t('SubsitesExtra.Subsite','Subsite'), $subsitesMap));
             }
         }
 
