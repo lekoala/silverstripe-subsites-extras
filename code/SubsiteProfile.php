@@ -17,7 +17,11 @@ class SubsiteProfile
         return strtolower(str_replace('Profile', '', self::$_current_profile));
     }
 
-    public static function applyToFields($dataobject, FieldList $fields)
+    /**
+     * @param DataObject $dataobject
+     * @param FieldList|array $fields
+     */
+    public static function applyToFields($dataobject, &$fields)
     {
         if (is_object($dataobject)) {
             $dataobject = get_class($dataobject);
@@ -29,14 +33,33 @@ class SubsiteProfile
         $profile::enable_custom_fields($dataobject, $fields);
     }
 
-    protected static function enable_custom_fields($class, FieldList $fields)
+    /**
+     * @param DataObject $dataobject
+     * @param FieldList|array $fields
+     */
+    protected static function enable_custom_fields($class, &$fields)
     {
 
     }
 
-    protected static function change_field_title($fields, $fieldName, $title,
+    /**
+     * Update a field title in an array or a FieldList
+     * 
+     * @param FieldList|array $fields
+     * @param string $fieldName
+     * @param string $title
+     * @param string $tooltip
+     * @return FieldList|array
+     */
+    protected static function change_field_title(&$fields, $fieldName, $title,
                                                  $tooltip = '')
     {
+        if (is_array($fields)) {
+            if (isset($fields[$fieldName])) {
+                $fields[$fieldName] = $title;
+            }
+            return $fields;
+        }
         $f = $fields->dataFieldByName($fieldName);
         if ($f) {
             $f->setTitle($title);
@@ -44,6 +67,7 @@ class SubsiteProfile
                 $f->setTooltip($tooltip);
             }
         }
+        return $fields;
     }
 
     protected static function enable_custom_translations()
@@ -60,7 +84,7 @@ class SubsiteProfile
             foreach ($translators as $name => $translator) {
                 /* @var $adapter Zend_Translate_Adapter */
                 $adapter = $translator->getAdapter();
-                
+
                 // Load translations from profile
                 $filename = $adapter->getFilenameForLocale($lang);
                 $filepath = Director::baseFolder()."/mysite/lang/".$profileDir.'/'.$filename;
