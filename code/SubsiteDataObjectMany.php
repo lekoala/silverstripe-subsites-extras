@@ -102,6 +102,9 @@ class SubsiteDataObjectMany extends DataExtension
     function onBeforeWrite()
     {
         parent::onBeforeWrite();
+        if($this->owner->ID && Subsite::currentSubsiteID()) {
+            $this->owner->Subsites()->add(Subsite::currentSubsiteID());
+        }
         $this->buildSubsiteList();
     }
 
