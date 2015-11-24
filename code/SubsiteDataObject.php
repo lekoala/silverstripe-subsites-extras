@@ -65,7 +65,10 @@ class SubsiteDataObject extends DataExtension
             $tableName = array_shift($froms);
 
             if ($subsiteID != 0) {
-                $query->addWhere("\"$tableName\".\"SubsiteID\" IN ($subsiteID) AND \"$tableName\".\"HideOnMainSite\" = 0");
+                $query->addWhere("\"$tableName\".\"SubsiteID\" IN ($subsiteID)");
+            }
+            else {
+                $query->addWhere("\"$tableName\".\"HideOnMainSite\" = 0");
             }
         }
     }
