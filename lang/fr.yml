@@ -1,12 +1,12 @@
-en:
+fr:
   AssetAdmin:
     CREATED: Date
     SIZE: Size
   FileSubsites:
-    AllSitesDropdownOpt: 'All sites'
-    SubsiteFieldLabel: Subsite
+    AllSitesDropdownOpt: 'Tous les sites'
+    SubsiteFieldLabel: 'Sous-site'
   Fluent:
-    ChangeLocale: 'Change Locale'
+    ChangeLocale: 'Changer de langue'
   GroupSubsites:
     ACCESSALL: 'All subsites'
     ACCESSONLY: 'Only these subsites'
@@ -22,13 +22,13 @@ en:
     SiteConfigSubtitle: 'Your tagline here'
     SiteConfigTitle: 'Your Site Name'
   SubsiteExtra:
-    BaseFolder: 'Base folder'
-    IS_PRIMARY: 'Is Primary'
-    SubsiteProfile: 'Subsite profile'
+    BaseFolder: 'Dossier'
+    IS_PRIMARY: 'Principal'
+    SubsiteProfile: 'Profil du sous-site'
   SubsiteFileExtension:
-    ShowInSubsites: 'Show in subsites'
+    ShowInSubsites: 'Afficher dans les sous-sites'
   SubsitesExtra:
-    ADD_NEW: 'Add a new subdomain'
-    HideOnMainSite: 'Hide on main site'
-    Subsite: Subsite
-    TITLE: Domain
+    ADD_NEW: 'Ajouter un nouveau sous-domaine'
+    HideOnMainSite: 'Masquer du site principal'
+    Subsite: 'Sous-site'
+    TITLE: Domaine
