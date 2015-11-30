@@ -98,7 +98,7 @@ class SubsiteExtension extends DataExtension
         if ($membersGroupName && !$membersGroup) {
             $membersGroup                    = new Group();
             $membersGroup->Title             = $membersGroupName;
-            $membersGroup->AccessAllSubsites = false;
+            $membersGroup->AccessAllSubsites = true;
             $membersGroup->write();
 
             $membersGroup->Subsites()->add($this->owner);

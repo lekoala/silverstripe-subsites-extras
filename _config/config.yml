@@ -27,3 +27,6 @@ AssetAdmin:
 LeftAndMain:
   extensions:
     - LeftAndMainSubsiteExtension
+Group:
+  extensions:
+    - SubsiteSimpleGroupExtension

@@ -5,6 +5,8 @@
  * This custom extension doesn't require AccessAllSubsites when not on the main site
  * which is more consistent
  *
+ * DEPRECATED IN FAVOR OF SubsiteSimpleGroupExtension
+ *
  * @package subsites
  */
 class SubsiteGroupExtension extends DataExtension implements PermissionProvider {
