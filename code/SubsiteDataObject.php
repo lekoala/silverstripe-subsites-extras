@@ -12,6 +12,7 @@
 class SubsiteDataObject extends DataExtension
 {
     private static $_accessible_sites_map_cache = null;
+    private static $_accessible_permissions = null;
     private static $db = array(
         'HideOnMainSite' => 'Boolean',
     );
@@ -86,7 +87,7 @@ class SubsiteDataObject extends DataExtension
         if (!$refresh && self::$_accessible_sites_map_cache) {
             return self::$_accessible_sites_map_cache;
         }
-        $subsites    = Subsite::accessible_sites("CMS_ACCESS_CMSMain");
+        $subsites    = Subsite::accessible_sites(self::accessiblePermissions());
         $subsitesMap = array();
         if ($subsites && $subsites->Count()) {
             $subsitesMap = $subsites->map('ID', 'Title');
@@ -112,7 +113,7 @@ class SubsiteDataObject extends DataExtension
 
     function updateCMSFields(FieldList $fields)
     {
-        $subsites    = Subsite::accessible_sites("CMS_ACCESS_CMSMain");
+        $subsites    = Subsite::accessible_sites(self::accessiblePermissions());
         $subsitesMap = array();
         if ($subsites && $subsites->Count()) {
             $subsitesMap = $subsites->map('ID', 'Title');
@@ -185,7 +186,7 @@ class SubsiteDataObject extends DataExtension
         if ($member->ID == Member::currentUserID()) {
             $goodSites = self::accessible_sites_ids();
         } else {
-            $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true,
+            $goodSites = Subsite::accessible_sites(self::accessiblePermissions(), true,
                     'all', $member)->column('ID');
         }
 
@@ -194,6 +195,13 @@ class SubsiteDataObject extends DataExtension
             return false;
         }
         return true;
+    }
+
+    static function accessiblePermissions() {
+        if(self::$_accessible_permissions === null) {
+            self::$_accessible_permissions = Config::inst()->get('SubsiteExtension','edit_permissions');
+        }
+        return self::$_accessible_permissions;
     }
 
     /**
