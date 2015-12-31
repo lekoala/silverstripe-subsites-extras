@@ -15,7 +15,7 @@ class SubsiteExtension extends DataExtension
     private static $admin_default_permissions = array();
     private static $_current_siteconfig_cache = array();
 
-    function onBeforeWrite()
+    public function onBeforeWrite()
     {
         parent::onBeforeWrite();
 
@@ -48,7 +48,7 @@ class SubsiteExtension extends DataExtension
         }
     }
 
-    function onAfterWrite()
+    public function onAfterWrite()
     {
         parent::onAfterWrite();
 
@@ -106,7 +106,7 @@ class SubsiteExtension extends DataExtension
         }
     }
 
-    function updateCMSFields(\FieldList $fields)
+    public function updateCMSFields(\FieldList $fields)
     {
         $fields->addFieldToTab('Root.Configuration',
             new TextField('BaseFolder',
@@ -136,14 +136,14 @@ class SubsiteExtension extends DataExtension
             $editableColsFields              = array();
             $editableColsFields['IsPrimary'] = array(
                 'title' => _t('SubsiteExtra.IS_PRIMARY', 'Is Primary'),
-                'callback' => function($record, $column, $grid) {
+                'callback' => function ($record, $column, $grid) {
                     $field = new CheckboxField($column);
                     return $field;
                 }
             );
             $editableColsFields['Domain'] = array(
                 'title' => _t('SubsitesExtra.TITLE', "Domain"),
-                'callback' => function($record, $column, $grid) {
+                'callback' => function ($record, $column, $grid) {
                     $field = new TextField($column);
                     $field->setAttribute('placeholder', 'mydomain.ext');
                     return $field;
@@ -166,7 +166,7 @@ class SubsiteExtension extends DataExtension
      * @param string $name
      * @return Group
      */
-    static function getGroupByName($name)
+    public static function getGroupByName($name)
     {
         if (!$name) {
             return false;
@@ -184,7 +184,7 @@ class SubsiteExtension extends DataExtension
      * @param string $title
      * @return string
      */
-    function getAdministratorGroupName($title = null)
+    public function getAdministratorGroupName($title = null)
     {
         if ($title === null) {
             $title = $this->owner->Title;
@@ -201,7 +201,7 @@ class SubsiteExtension extends DataExtension
      * @param string $title
      * @return string
      */
-    function getMembersGroupName($title = null)
+    public function getMembersGroupName($title = null)
     {
         if ($title === null) {
             $title = $this->owner->Title;
@@ -217,7 +217,7 @@ class SubsiteExtension extends DataExtension
      * 
      * @return \SiteConfig
      */
-    function getSiteConfig()
+    public function getSiteConfig()
     {
         if (!$this->owner->ID) {
             return;
