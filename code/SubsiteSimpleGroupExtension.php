@@ -16,7 +16,6 @@ class SubsiteSimpleGroupExtension extends DataExtension
 
     public function updateCMSFields(\FieldList $fields)
     {
-        $fields->addFieldToTab('Root.Subsites', new CheckboxField('CanSelectSubsite',_t('SubsitesExtra.CanSelectSubsite','Can select subsite in admin')));
+        $fields->addFieldToTab('Root.Subsites', new CheckboxField('CanSelectSubsite', _t('SubsitesExtra.CanSelectSubsite', 'Can select subsite in admin')));
     }
-
 }

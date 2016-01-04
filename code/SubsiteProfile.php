@@ -39,7 +39,6 @@ class SubsiteProfile
      */
     protected static function enable_custom_fields($class, &$fields)
     {
-
     }
 
     /**
@@ -89,7 +88,9 @@ class SubsiteProfile
                 $filename = $adapter->getFilenameForLocale($lang);
                 $filepath = Director::baseFolder()."/mysite/lang/".$profileDir.'/'.$filename;
 
-                if ($filename && !file_exists($filepath)) continue;
+                if ($filename && !file_exists($filepath)) {
+                    continue;
+                }
                 $adapter->addTranslation(
                     array('content' => $filepath, 'locale' => $lang)
                 );
@@ -99,7 +100,6 @@ class SubsiteProfile
 
     protected static function enable_custom_code()
     {
-
     }
 
     public static function enable()

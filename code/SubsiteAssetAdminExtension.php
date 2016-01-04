@@ -8,7 +8,7 @@
 class SubsiteAssetAdminExtension extends LeftAndMainExtension
 {
 
-    function updateEditForm(Form $form)
+    public function updateEditForm(Form $form)
     {
         $gridField = $form->Fields()->dataFieldByName('File');
         $columns   = $gridField->getConfig()->getComponentByType('GridFieldDataColumns');

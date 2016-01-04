@@ -20,13 +20,15 @@ class SubsiteDataObject extends DataExtension
         'Subsite' => 'Subsite',
     );
 
-    function isMainDataObject()
+    public function isMainDataObject()
     {
-        if ($this->owner->SubsiteID == 0) return true;
+        if ($this->owner->SubsiteID == 0) {
+            return true;
+        }
         return false;
     }
 
-    function canView($member = null)
+    public function canView($member = null)
     {
         if ($this->canEdit($member)) {
             return true;
@@ -36,27 +38,35 @@ class SubsiteDataObject extends DataExtension
     /**
      * Update any requests to limit the results to the current site
      */
-    function augmentSQL(SQLQuery &$query, DataQuery &$dataQuery = null)
+    public function augmentSQL(SQLQuery &$query, DataQuery &$dataQuery = null)
     {
         $ctrl = null;
         if (Controller::has_curr()) {
             $ctrl = Controller::curr();
         }
 
-        if (Subsite::$disable_subsite_filter) return;
-        if ($dataQuery->getQueryParam('Subsite.filter') === false) return;
-        if ($ctrl && get_class(Controller::curr()) == 'Security') return;
+        if (Subsite::$disable_subsite_filter) {
+            return;
+        }
+        if ($dataQuery->getQueryParam('Subsite.filter') === false) {
+            return;
+        }
+        if ($ctrl && get_class(Controller::curr()) == 'Security') {
+            return;
+        }
 
         // Don't run on delete queries, since they are always tied to
         // a specific ID.
-        if ($query->getDelete()) return;
+        if ($query->getDelete()) {
+            return;
+        }
 
         // If you're querying by ID, ignore the sub-site - this is a bit ugly...
         // if(!$query->where || (strpos($query->where[0], ".\"ID\" = ") === false && strpos($query->where[0], ".`ID` = ") === false && strpos($query->where[0], ".ID = ") === false && strpos($query->where[0], "ID = ") !== 0)) {
         if (!$query->filtersOnID()) {
-
-            if (Subsite::$force_subsite) $subsiteID = Subsite::$force_subsite;
-            else {
+            if (Subsite::$force_subsite) {
+                $subsiteID = Subsite::$force_subsite;
+            } else {
                 /* if($context = DataObject::context_obj()) $subsiteID = (int)$context->SubsiteID;
                   else */$subsiteID = (int) Subsite::currentSubsiteID();
             }
@@ -67,22 +77,22 @@ class SubsiteDataObject extends DataExtension
 
             if ($subsiteID != 0) {
                 $query->addWhere("\"$tableName\".\"SubsiteID\" IN ($subsiteID)");
-            }
-            else {
+            } else {
                 $query->addWhere("\"$tableName\".\"HideOnMainSite\" = 0");
             }
         }
     }
 
-    function onBeforeWrite()
+    public function onBeforeWrite()
     {
-        if (!$this->owner->ID && !$this->owner->SubsiteID)
-                $this->owner->SubsiteID = Subsite::currentSubsiteID();
+        if (!$this->owner->ID && !$this->owner->SubsiteID) {
+            $this->owner->SubsiteID = Subsite::currentSubsiteID();
+        }
 
         parent::onBeforeWrite();
     }
 
-    static function accessible_sites_map($refresh = false)
+    public static function accessible_sites_map($refresh = false)
     {
         if (!$refresh && self::$_accessible_sites_map_cache) {
             return self::$_accessible_sites_map_cache;
@@ -96,13 +106,13 @@ class SubsiteDataObject extends DataExtension
         return self::$_accessible_sites_map_cache;
     }
 
-    static function accessible_sites_ids($refresh = false)
+    public static function accessible_sites_ids($refresh = false)
     {
         $map = self::accessible_sites_map($refresh);
         return array_keys($map);
     }
 
-    static function check_accessible_sites_map($subsiteID, $refresh = false)
+    public static function check_accessible_sites_map($subsiteID, $refresh = false)
     {
         if (!$subsiteID) {
             return false;
@@ -111,7 +121,7 @@ class SubsiteDataObject extends DataExtension
         return array_key_exists($subsiteID, $array);
     }
 
-    function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields)
     {
         $subsites    = Subsite::accessible_sites(self::accessiblePermissions());
         $subsitesMap = array();
@@ -121,12 +131,12 @@ class SubsiteDataObject extends DataExtension
         }
         if (Subsite::currentSubsiteID()) {
             $fields->removeByName('SubsiteID');
-            $fields->addFieldToTab('Root.Main', new CheckboxField('HideOnMainSite',_t('SubsitesExtra.HideOnMainSite','Hide on main site')));
+            $fields->addFieldToTab('Root.Main', new CheckboxField('HideOnMainSite', _t('SubsitesExtra.HideOnMainSite', 'Hide on main site')));
         } else {
             $field = $fields->dataFieldByName('SubsiteID');
             if (!$field) {
                 $fields->addFieldToTab('Root.Subsite',
-                    new DropdownField('SubsiteID', _t('SubsitesExtra.Subsite','Subsite'), $subsitesMap));
+                    new DropdownField('SubsiteID', _t('SubsitesExtra.Subsite', 'Subsite'), $subsitesMap));
             }
         }
 
@@ -134,9 +144,11 @@ class SubsiteDataObject extends DataExtension
         SubsiteProfile::applyToFields($this->owner, $fields);
     }
 
-    function alternateSiteConfig()
+    public function alternateSiteConfig()
     {
-        if (!$this->owner->SubsiteID) return false;
+        if (!$this->owner->SubsiteID) {
+            return false;
+        }
         $sc = DataObject::get_one('SiteConfig',
                 '"SubsiteID" = '.$this->owner->SubsiteID);
         if (!$sc) {
@@ -157,7 +169,7 @@ class SubsiteDataObject extends DataExtension
      *
      * @return boolean
      */
-    function canEdit($member = null)
+    public function canEdit($member = null)
     {
         // If no subsite ID is defined, let dataobject determine the permission
         if (!$this->owner->SubsiteID || !Subsite::currentSubsiteID()) {
@@ -170,7 +182,7 @@ class SubsiteDataObject extends DataExtension
             // The relationships might not be available during the record creation when using a GridField.
             // In this case the related objects will have empty fields, and SubsiteID will not be available.
             //
-			// We do the second best: fetch the likely SubsiteID from the session. The drawback is this might
+            // We do the second best: fetch the likely SubsiteID from the session. The drawback is this might
             // make it possible to force relations to point to other (forbidden) subsites.
             $subsiteID = Subsite::currentSubsiteID();
         }
@@ -180,7 +192,9 @@ class SubsiteDataObject extends DataExtension
             return null;
         }
 
-        if (!$member) $member = Member::currentUser();
+        if (!$member) {
+            $member = Member::currentUser();
+        }
 
         // Find the sites that this user has access to
         if ($member->ID == Member::currentUserID()) {
@@ -197,9 +211,10 @@ class SubsiteDataObject extends DataExtension
         return true;
     }
 
-    static function accessiblePermissions() {
-        if(self::$_accessible_permissions === null) {
-            self::$_accessible_permissions = Config::inst()->get('SubsiteExtension','edit_permissions');
+    public static function accessiblePermissions()
+    {
+        if (self::$_accessible_permissions === null) {
+            self::$_accessible_permissions = Config::inst()->get('SubsiteExtension', 'edit_permissions');
         }
         return self::$_accessible_permissions;
     }
@@ -207,9 +222,11 @@ class SubsiteDataObject extends DataExtension
     /**
      * @return boolean
      */
-    function canDelete($member = null)
+    public function canDelete($member = null)
     {
-        if (!$member && $member !== FALSE) $member = Member::currentUser();
+        if (!$member && $member !== false) {
+            $member = Member::currentUser();
+        }
 
         return $this->canEdit($member);
     }
@@ -217,14 +234,15 @@ class SubsiteDataObject extends DataExtension
     /**
      * Called by ContentController::init();
      */
-    static function contentcontrollerInit($controller)
+    public static function contentcontrollerInit($controller)
     {
         $subsite = Subsite::currentSubsite();
-        if ($subsite && $subsite->Theme)
-                SSViewer::set_theme(Subsite::currentSubsite()->Theme);
+        if ($subsite && $subsite->Theme) {
+            SSViewer::set_theme(Subsite::currentSubsite()->Theme);
+        }
     }
 
-    function alternateAbsoluteLink()
+    public function alternateAbsoluteLink()
     {
         // Generate the existing absolute URL and replace the domain with the subsite domain.
         // This helps deal with Link() returning an absolute URL.
@@ -239,7 +257,7 @@ class SubsiteDataObject extends DataExtension
     /**
      * Return a piece of text to keep DataObject cache keys appropriately specific
      */
-    function cacheKeyComponent()
+    public function cacheKeyComponent()
     {
         return 'subsite-'.Subsite::currentSubsiteID();
     }
@@ -248,14 +266,16 @@ class SubsiteDataObject extends DataExtension
      * @param Member
      * @return boolean|null
      */
-    function canCreate($member = null)
+    public function canCreate($member = null)
     {
         // Typically called on a singleton, so we're not using the Subsite() relation
         $subsite = Subsite::currentSubsite();
         if ($subsite && $subsite->exists() && $subsite->PageTypeBlacklist) {
             $blacklisted = explode(',', $subsite->PageTypeBlacklist);
             // All subclasses need to be listed explicitly
-            if (in_array($this->owner->class, $blacklisted)) return false;
+            if (in_array($this->owner->class, $blacklisted)) {
+                return false;
+            }
         }
         return true;
     }

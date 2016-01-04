@@ -17,16 +17,17 @@ class SubsiteDataObjectMany extends DataExtension
 
     public static function add_to_class($class, $extensionClass, $args = null)
     {
-
     }
 
-    function isMainDataObject()
+    public function isMainDataObject()
     {
-        if ($this->owner->SubsiteList == '') return true;
+        if ($this->owner->SubsiteList == '') {
+            return true;
+        }
         return false;
     }
 
-    function listSubsiteIDs()
+    public function listSubsiteIDs()
     {
         if ($this->owner->SubsiteList == '') {
             return array();
@@ -42,7 +43,7 @@ class SubsiteDataObjectMany extends DataExtension
         return $ids;
     }
 
-    function canView($member = null)
+    public function canView($member = null)
     {
         if ($this->canEdit($member)) {
             return true;
@@ -52,26 +53,34 @@ class SubsiteDataObjectMany extends DataExtension
     /**
      * Update any requests to limit the results to the current site
      */
-    function augmentSQL(SQLQuery &$query, DataQuery &$dataQuery = null)
+    public function augmentSQL(SQLQuery &$query, DataQuery &$dataQuery = null)
     {
         $ctrl = null;
         if (Controller::has_curr()) {
             $ctrl = Controller::curr();
         }
 
-        if (Subsite::$disable_subsite_filter) return;
-        if ($dataQuery->getQueryParam('Subsite.filter') === false) return;
-        if ($ctrl && get_class($ctrl) == 'Security') return;
+        if (Subsite::$disable_subsite_filter) {
+            return;
+        }
+        if ($dataQuery->getQueryParam('Subsite.filter') === false) {
+            return;
+        }
+        if ($ctrl && get_class($ctrl) == 'Security') {
+            return;
+        }
 
         // Don't run on delete queries, since they are always tied to
         // a specific ID.
-        if ($query->getDelete()) return;
+        if ($query->getDelete()) {
+            return;
+        }
 
         // If you're querying by ID, ignore the sub-site - this is a bit ugly...
         if (!$query->filtersOnID()) {
-
-            if (Subsite::$force_subsite) $subsiteID = Subsite::$force_subsite;
-            else {
+            if (Subsite::$force_subsite) {
+                $subsiteID = Subsite::$force_subsite;
+            } else {
                 $subsiteID = (int) Subsite::currentSubsiteID();
             }
 
@@ -85,7 +94,7 @@ class SubsiteDataObjectMany extends DataExtension
         }
     }
 
-    function buildSubsiteList()
+    public function buildSubsiteList()
     {
         $list = '';
         foreach ($this->owner->Subsites() as $sub) {
@@ -99,21 +108,21 @@ class SubsiteDataObjectMany extends DataExtension
         return $list;
     }
 
-    function onBeforeWrite()
+    public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        if($this->owner->ID && Subsite::currentSubsiteID()) {
+        if ($this->owner->ID && Subsite::currentSubsiteID()) {
             $this->owner->Subsites()->add(Subsite::currentSubsiteID());
         }
         $this->buildSubsiteList();
     }
 
-    function onAfterWrite()
+    public function onAfterWrite()
     {
         parent::onAfterWrite();
     }
 
-    function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields)
     {
         if (!$this->owner->ID) {
             return;
@@ -147,9 +156,11 @@ class SubsiteDataObjectMany extends DataExtension
         SubsiteProfile::applyToFields($this->owner, $fields);
     }
 
-    function alternateSiteConfig()
+    public function alternateSiteConfig()
     {
-        if (!$this->owner->SubsiteID) return false;
+        if (!$this->owner->SubsiteID) {
+            return false;
+        }
         $sc = DataObject::get_one('SiteConfig',
                 '"SubsiteID" = '.$this->owner->SubsiteID);
         if (!$sc) {
@@ -170,7 +181,7 @@ class SubsiteDataObjectMany extends DataExtension
      *
      * @return boolean
      */
-    function canEdit($member = null)
+    public function canEdit($member = null)
     {
         // If no subsite ID is defined, let dataobject determine the permission
         if (!$this->owner->SubsiteList || !Subsite::currentSubsiteID()) {
@@ -183,12 +194,14 @@ class SubsiteDataObjectMany extends DataExtension
             // The relationships might not be available during the record creation when using a GridField.
             // In this case the related objects will have empty fields, and SubsiteID will not be available.
             //
-			// We do the second best: fetch the likely SubsiteID from the session. The drawback is this might
+            // We do the second best: fetch the likely SubsiteID from the session. The drawback is this might
             // make it possible to force relations to point to other (forbidden) subsites.
             $subsiteIDs = array(Subsite::currentSubsiteID());
         }
 
-        if (!$member) $member = Member::currentUser();
+        if (!$member) {
+            $member = Member::currentUser();
+        }
 
         // Find the sites that this user has access to
         if ($member->ID == Member::currentUserID()) {
@@ -214,9 +227,11 @@ class SubsiteDataObjectMany extends DataExtension
     /**
      * @return boolean
      */
-    function canDelete($member = null)
+    public function canDelete($member = null)
     {
-        if (!$member && $member !== FALSE) $member = Member::currentUser();
+        if (!$member && $member !== false) {
+            $member = Member::currentUser();
+        }
 
         return $this->canEdit($member);
     }
@@ -243,7 +258,7 @@ class SubsiteDataObjectMany extends DataExtension
         return array_unique($classes);
     }
 
-    function alternateAbsoluteLink()
+    public function alternateAbsoluteLink()
     {
         // Generate the existing absolute URL and replace the domain with the subsite domain.
         // This helps deal with Link() returning an absolute URL.
@@ -258,7 +273,7 @@ class SubsiteDataObjectMany extends DataExtension
     /**
      * Return a piece of text to keep DataObject cache keys appropriately specific
      */
-    function cacheKeyComponent()
+    public function cacheKeyComponent()
     {
         return 'subsite-'.str_replace(',', '-', $this->owner->SubsiteList);
     }
@@ -267,14 +282,16 @@ class SubsiteDataObjectMany extends DataExtension
      * @param Member
      * @return boolean|null
      */
-    function canCreate($member = null)
+    public function canCreate($member = null)
     {
         // Typically called on a singleton, so we're not using the Subsite() relation
         $subsite = Subsite::currentSubsite();
         if ($subsite && $subsite->exists() && $subsite->PageTypeBlacklist) {
             $blacklisted = explode(',', $subsite->PageTypeBlacklist);
             // All subclasses need to be listed explicitly
-            if (in_array($this->owner->class, $blacklisted)) return false;
+            if (in_array($this->owner->class, $blacklisted)) {
+                return false;
+            }
         }
         return true;
     }

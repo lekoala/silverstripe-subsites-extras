@@ -8,7 +8,7 @@
 class SubsiteSecurityAutocompleter extends Controller
 {
 
-    function init()
+    public function init()
     {
         SSViewer::set_source_file_comments(false);
         parent::init();
@@ -19,20 +19,22 @@ class SubsiteSecurityAutocompleter extends Controller
      */
     public function autocomplete()
     {
-
         $fieldName = $this->urlParams['ID'];
         $fieldVal  = $_REQUEST[$fieldName];
         $result    = '';
 
         // Make sure we only autocomplete on keys that actually exist, and that we don't autocomplete on password
-        if (!singleton('Member')->hasDatabaseField($fieldName) || $fieldName == 'Password')
-                return;
+        if (!singleton('Member')->hasDatabaseField($fieldName) || $fieldName == 'Password') {
+            return;
+        }
 
         $groups      = DataObject::get("Group");
         $groupIDs    = array();
         $groupIDs[0] = 0;
         foreach ($groups as $group) {
-            if ($group->canEdit()) $groupIDs[$group->ID] = $group->ID;
+            if ($group->canEdit()) {
+                $groupIDs[$group->ID] = $group->ID;
+            }
         }
         $idList  = implode(",", $groupIDs);
         $where   = ' AND `Group_Members`.`GroupID` IN ('.$idList.') ';

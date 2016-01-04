@@ -11,7 +11,7 @@ class SubsiteFileExtension extends DataExtension
      * Set this to true to make all folders belong to main site by default
      * @var bool
      */
-    static $default_root_folders_global = false;
+    public static $default_root_folders_global = false;
     private static $db                  = array(
         'ShowInSubsites' => 'Boolean',
     );
@@ -26,17 +26,19 @@ class SubsiteFileExtension extends DataExtension
      * Amends the CMS tree title for folders in the Files & Images section.
      * Prefixes a '* ' to the folders that are accessible from all subsites.
      */
-    function alternateTreeTitle()
+    public function alternateTreeTitle()
     {
-        if ($this->owner->SubsiteID == 0 && $this->owner->ShowInSubsites)
-                return " * ".$this->owner->Title;
-        else return $this->owner->Title;
+        if ($this->owner->SubsiteID == 0 && $this->owner->ShowInSubsites) {
+            return " * ".$this->owner->Title;
+        } else {
+            return $this->owner->Title;
+        }
     }
 
     /**
      * Add subsites-specific fields to the folder editor.
      */
-    function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields)
     {
         $ctrl = null;
         if (Controller::has_curr()) {
@@ -82,9 +84,11 @@ class SubsiteFileExtension extends DataExtension
     /**
      * Update any requests to limit the results to the current site
      */
-    function augmentSQL(SQLQuery &$query)
+    public function augmentSQL(SQLQuery &$query)
     {
-        if (Subsite::$disable_subsite_filter) return;
+        if (Subsite::$disable_subsite_filter) {
+            return;
+        }
 
         // If you're querying by ID, ignore the sub-site - this is a bit ugly... (but it was WAYYYYYYYYY worse)
         //@TODO I don't think excluding if SiteTree_ImageTracking is a good idea however because of the SS 3.0 api and ManyManyList::removeAll() changing the from table after this function is called there isn't much of a choice
@@ -113,7 +117,7 @@ class SubsiteFileExtension extends DataExtension
         }
     }
 
-    function canView()
+    public function canView()
     {
         // This is required, otherwise the whole list is not displayed
         if (Controller::curr() instanceof LeftAndMain) {
@@ -125,7 +129,7 @@ class SubsiteFileExtension extends DataExtension
         }
     }
 
-    function onBeforeWrite()
+    public function onBeforeWrite()
     {
         if (!$this->owner->ID && !$this->owner->SubsiteID) {
             if (self::$default_root_folders_global) {
@@ -136,7 +140,7 @@ class SubsiteFileExtension extends DataExtension
         }
     }
 
-    function onAfterUpload()
+    public function onAfterUpload()
     {
         $parent = $this->owner->Parent();
 
@@ -158,7 +162,7 @@ class SubsiteFileExtension extends DataExtension
         }
     }
 
-    function canEdit($member = null)
+    public function canEdit($member = null)
     {
         // Check the CMS_ACCESS_SecurityAdmin privileges on the subsite that owns this group
         $subsiteID = Session::get('SubsiteID');
@@ -176,7 +180,7 @@ class SubsiteFileExtension extends DataExtension
     /**
      * Return a piece of text to keep DataObject cache keys appropriately specific
      */
-    function cacheKeyComponent()
+    public function cacheKeyComponent()
     {
         return 'subsite-'.Subsite::currentSubsiteID();
     }
