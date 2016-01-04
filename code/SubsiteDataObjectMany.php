@@ -45,9 +45,10 @@ class SubsiteDataObjectMany extends DataExtension
 
     public function canView($member = null)
     {
-        if ($this->canEdit($member)) {
-            return true;
+        if ($this->canEdit($member) === false) {
+            return false;
         }
+        return true;
     }
 
     /**
