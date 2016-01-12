@@ -29,6 +29,7 @@ en:
     ShowInSubsites: 'Show in subsites'
   SubsitesExtra:
     ADD_NEW: 'Add a new subdomain'
+    CanSelectSubsite: 'Can select subsite in admin'
     HideOnMainSite: 'Hide on main site'
     Subsite: Subsite
     TITLE: Domain

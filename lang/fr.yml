@@ -4,7 +4,7 @@ fr:
     SIZE: Size
   FileSubsites:
     AllSitesDropdownOpt: 'Tous les sites'
-    SubsiteFieldLabel: 'Sous-site'
+    SubsiteFieldLabel: Sous-site
   Fluent:
     ChangeLocale: 'Changer de langue'
   GroupSubsites:
@@ -22,13 +22,14 @@ fr:
     SiteConfigSubtitle: 'Your tagline here'
     SiteConfigTitle: 'Your Site Name'
   SubsiteExtra:
-    BaseFolder: 'Dossier'
-    IS_PRIMARY: 'Principal'
+    BaseFolder: Dossier
+    IS_PRIMARY: Principal
     SubsiteProfile: 'Profil du sous-site'
   SubsiteFileExtension:
     ShowInSubsites: 'Afficher dans les sous-sites'
   SubsitesExtra:
     ADD_NEW: 'Ajouter un nouveau sous-domaine'
+    CanSelectSubsite: 'Can select subsite in admin'
     HideOnMainSite: 'Masquer du site principal'
-    Subsite: 'Sous-site'
+    Subsite: Sous-site
     TITLE: Domaine
