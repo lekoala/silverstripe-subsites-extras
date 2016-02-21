@@ -43,7 +43,7 @@ class SubsiteProfile
 
     /**
      * Update a field title in an array or a FieldList
-     * 
+     *
      * @param FieldList|array $fields
      * @param string $fieldName
      * @param string $title
