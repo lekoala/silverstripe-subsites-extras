@@ -214,7 +214,7 @@ class SubsiteExtension extends DataExtension
 
     /**
      * Return a siteconfig for this subsite
-     * 
+     *
      * @return \SiteConfig
      */
     public function getSiteConfig()

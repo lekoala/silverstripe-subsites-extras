@@ -1,6 +1,6 @@
 ---
 Name: subsite-extras
-After: 
+After:
 - 'fluent/*'
 - 'subsites/*'
 Only:
