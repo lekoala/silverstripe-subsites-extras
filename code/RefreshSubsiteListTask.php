@@ -10,6 +10,8 @@ class RefreshSubsiteListTask extends BuildTask
 
     public function run($request)
     {
+        HTTP::set_cache_age(0);
+        set_time_limit(0);
         $classes = SubsiteDataObjectMany::extendedClasses();
 
         foreach ($classes as $cl) {
