@@ -39,6 +39,7 @@ class SubsiteProfile
      */
     protected static function enable_custom_fields($class, &$fields)
     {
+
     }
 
     /**
@@ -100,10 +101,19 @@ class SubsiteProfile
 
     protected static function enable_custom_code()
     {
+
     }
 
-    public static function enable()
+    public static function enable($force_profile = null)
     {
+        if ($force_profile) {
+            self::$_current_profile = $force_profile;
+
+            $force_profile::enable_custom_translations();
+            $force_profile::enable_custom_code();
+
+            return;
+        }
         if (self::$_current_profile) {
             return;
         }
