@@ -134,7 +134,7 @@ class SubsiteDataObject extends DataExtension
             $fields->removeByName('SubsiteID');
             $fields->push(new HiddenField('SubsiteID', null,
                 Subsite::currentSubsiteID()));
-            $fields->addFieldToTab('Root.Subsite',
+            $fields->addFieldToTab('Root.Main',
                 new CheckboxField('HideOnMainSite',
                 _t('SubsitesExtra.HideOnMainSite', 'Hide on main site')));
         } else {
