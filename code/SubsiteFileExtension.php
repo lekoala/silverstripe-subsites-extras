@@ -12,13 +12,13 @@ class SubsiteFileExtension extends DataExtension
      * @var bool
      */
     public static $default_root_folders_global = false;
-    private static $db                  = array(
+    private static $db                         = array(
         'ShowInSubsites' => 'Boolean',
     );
-    private static $has_one             = array(
+    private static $has_one                    = array(
         'Subsite' => 'Subsite',
     );
-    private static $defaults            = array(
+    private static $defaults                   = array(
         'ShowInSubsites' => false
     );
 

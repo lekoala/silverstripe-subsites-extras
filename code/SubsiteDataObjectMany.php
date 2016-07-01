@@ -17,6 +17,7 @@ class SubsiteDataObjectMany extends DataExtension
 
     public static function add_to_class($class, $extensionClass, $args = null)
     {
+
     }
 
     public function isMainDataObject()
@@ -208,8 +209,8 @@ class SubsiteDataObjectMany extends DataExtension
         if ($member->ID == Member::currentUserID()) {
             $goodSites = SubsiteDataObject::accessible_sites_ids();
         } else {
-            $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true, 'all',
-                    $member)->column('ID');
+            $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true,
+                    'all', $member)->column('ID');
         }
 
 

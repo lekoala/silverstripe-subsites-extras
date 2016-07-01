@@ -12,8 +12,8 @@
 class SubsiteDataObject extends DataExtension
 {
     private static $_accessible_sites_map_cache = null;
-    private static $_accessible_permissions = null;
-    private static $db = array(
+    private static $_accessible_permissions     = null;
+    private static $db                          = array(
         'HideOnMainSite' => 'Boolean',
     );
     private static $has_one                     = array(
@@ -112,7 +112,8 @@ class SubsiteDataObject extends DataExtension
         return array_keys($map);
     }
 
-    public static function check_accessible_sites_map($subsiteID, $refresh = false)
+    public static function check_accessible_sites_map($subsiteID,
+                                                      $refresh = false)
     {
         if (!$subsiteID) {
             return false;
@@ -131,12 +132,17 @@ class SubsiteDataObject extends DataExtension
         }
         if (Subsite::currentSubsiteID()) {
             $fields->removeByName('SubsiteID');
-            $fields->addFieldToTab('Root.Main', new CheckboxField('HideOnMainSite', _t('SubsitesExtra.HideOnMainSite', 'Hide on main site')));
+            $fields->push(new HiddenField('SubsiteID', null,
+                Subsite::currentSubsiteID()));
+            $fields->addFieldToTab('Root.Subsite',
+                new CheckboxField('HideOnMainSite',
+                _t('SubsitesExtra.HideOnMainSite', 'Hide on main site')));
         } else {
             $field = $fields->dataFieldByName('SubsiteID');
             if (!$field) {
                 $fields->addFieldToTab('Root.Subsite',
-                    new DropdownField('SubsiteID', _t('SubsitesExtra.Subsite', 'Subsite'), $subsitesMap));
+                    new DropdownField('SubsiteID',
+                    _t('SubsitesExtra.Subsite', 'Subsite'), $subsitesMap));
             }
         }
 
@@ -200,10 +206,9 @@ class SubsiteDataObject extends DataExtension
         if ($member->ID == Member::currentUserID()) {
             $goodSites = self::accessible_sites_ids();
         } else {
-            $goodSites = Subsite::accessible_sites(self::accessiblePermissions(), true,
-                    'all', $member)->column('ID');
+            $goodSites = Subsite::accessible_sites(self::accessiblePermissions(),
+                    true, 'all', $member)->column('ID');
         }
-
         // Return true if they have access to this object's site
         if (!(in_array(0, $goodSites) || in_array($subsiteID, $goodSites))) {
             return false;
@@ -214,7 +219,8 @@ class SubsiteDataObject extends DataExtension
     public static function accessiblePermissions()
     {
         if (self::$_accessible_permissions === null) {
-            self::$_accessible_permissions = Config::inst()->get('SubsiteExtension', 'edit_permissions');
+            self::$_accessible_permissions = Config::inst()->get('SubsiteExtension',
+                'edit_permissions');
         }
         return self::$_accessible_permissions;
     }
@@ -268,15 +274,6 @@ class SubsiteDataObject extends DataExtension
      */
     public function canCreate($member = null)
     {
-        // Typically called on a singleton, so we're not using the Subsite() relation
-        $subsite = Subsite::currentSubsite();
-        if ($subsite && $subsite->exists() && $subsite->PageTypeBlacklist) {
-            $blacklisted = explode(',', $subsite->PageTypeBlacklist);
-            // All subclasses need to be listed explicitly
-            if (in_array($this->owner->class, $blacklisted)) {
-                return false;
-            }
-        }
         return true;
     }
 }

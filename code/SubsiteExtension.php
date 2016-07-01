@@ -172,8 +172,9 @@ class SubsiteExtension extends DataExtension
             return false;
         }
         Subsite::$disable_subsite_filter = true;
-        $urlfilter = new URLSegmentFilter;
-        $g = Group::get()->filter('Code', $urlfilter->filter($name))->first();
+        $urlfilter                       = new URLSegmentFilter;
+        $g                               = Group::get()->filter('Code',
+                $urlfilter->filter($name))->first();
         Subsite::$disable_subsite_filter = false;
         return $g;
     }

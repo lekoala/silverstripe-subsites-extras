@@ -7,7 +7,7 @@
  */
 class SubsiteSimpleGroupExtension extends DataExtension
 {
-    private static $db = array(
+    private static $db       = array(
         'CanSelectSubsite' => 'Boolean'
     );
     private static $defaults = array(
@@ -16,6 +16,8 @@ class SubsiteSimpleGroupExtension extends DataExtension
 
     public function updateCMSFields(\FieldList $fields)
     {
-        $fields->addFieldToTab('Root.Subsites', new CheckboxField('CanSelectSubsite', _t('SubsitesExtra.CanSelectSubsite', 'Can select subsite in admin')));
+        $fields->addFieldToTab('Root.Subsites',
+            new CheckboxField('CanSelectSubsite',
+            _t('SubsitesExtra.CanSelectSubsite', 'Can select subsite in admin')));
     }
 }

@@ -12,6 +12,7 @@ class SubsiteLoginExtension extends DataExtension
     public function onBeforeSecurityLogin()
     {
         if (isset($_GET['BackURL']) && strstr($_GET['BackURL'], '/admin/')) {
+
         }
     }
 }

@@ -20,7 +20,7 @@ class RefreshSubsiteListTask extends BuildTask
             $rec = $cl::get();
             foreach ($rec as $r) {
                 $oldList = $r->SubsiteList;
-                $list = $r->buildSubsiteList();
+                $list    = $r->buildSubsiteList();
                 if ($list != $oldList) {
                     $qry = "UPDATE $cl SET SubsiteList = '$list' WHERE ID = {$r->ID}";
                     DB::query($qry);
