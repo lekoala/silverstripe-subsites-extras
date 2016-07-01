@@ -128,7 +128,9 @@ class SubsiteDataObject extends DataExtension
         $subsitesMap = array();
         if ($subsites && $subsites->Count()) {
             $subsitesMap = $subsites->map('ID', 'Title');
-            unset($subsitesMap[$this->owner->SubsiteID]);
+        }
+        if (!isset($subsitesMap[$this->owner->SubsiteID])) {
+            $subsitesMap[$this->owner->SubsiteID] = $this->owner->Subsite()->Title;
         }
         if (Subsite::currentSubsiteID()) {
             $fields->removeByName('SubsiteID');
@@ -138,12 +140,13 @@ class SubsiteDataObject extends DataExtension
                 new CheckboxField('HideOnMainSite',
                 _t('SubsitesExtra.HideOnMainSite', 'Hide on main site')));
         } else {
-            $field = $fields->dataFieldByName('SubsiteID');
-            if (!$field) {
-                $fields->addFieldToTab('Root.Subsite',
-                    new DropdownField('SubsiteID',
-                    _t('SubsitesExtra.Subsite', 'Subsite'), $subsitesMap));
-            }
+            $fields->removeByName('SubsiteID');
+            $fields->addFieldToTab('Root.Subsite',
+                new DropdownField('SubsiteID',
+                _t('SubsitesExtra.Subsite', 'Subsite'), $subsitesMap));
+            $fields->addFieldToTab('Root.Subsite',
+                new CheckboxField('HideOnMainSite',
+                _t('SubsitesExtra.HideOnMainSite', 'Hide on main site')));
         }
 
         // Profile integration
