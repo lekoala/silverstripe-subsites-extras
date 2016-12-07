@@ -12,6 +12,9 @@ class SubsiteFileExtension extends DataExtension
      * @var bool
      */
     public static $default_root_folders_global = false;
+
+    public static $ignore_file_filter = false;
+    
     private static $db                         = array(
         'ShowInSubsites' => 'Boolean',
     );
@@ -87,6 +90,9 @@ class SubsiteFileExtension extends DataExtension
     public function augmentSQL(SQLQuery &$query)
     {
         if (Subsite::$disable_subsite_filter) {
+            return;
+        }
+        if(self::$ignore_file_filter) {
             return;
         }
 
