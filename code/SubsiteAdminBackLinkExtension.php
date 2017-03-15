@@ -5,7 +5,7 @@
  *
  * @author lekoala
  */
-class SubsiteAdminExtension extends Extension
+class SubsiteAdminBackLinkExtension extends Extension
 {
 
     /**
