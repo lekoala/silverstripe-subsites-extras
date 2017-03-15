@@ -22,7 +22,7 @@ Security:
     - SubsiteLoginExtension
 SubsiteAdmin:
   extensions:
-    - SubsiteAdminExtension
+    - SubsiteAdminBackLinkExtension
 AssetAdmin:
   extensions:
     - SubsiteAssetAdminExtension
