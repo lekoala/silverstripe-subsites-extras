@@ -10,6 +10,7 @@
  */
 class SubsiteProfile
 {
+
     private static $_current_profile;
 
     public static function getProfileDir()
@@ -51,8 +52,7 @@ class SubsiteProfile
      * @param string $tooltip
      * @return FieldList|array
      */
-    protected static function change_field_title(&$fields, $fieldName, $title,
-                                                 $tooltip = '')
+    protected static function change_field_title(&$fields, $fieldName, $title, $tooltip = '')
     {
         if (is_array($fields)) {
             if (isset($fields[$fieldName])) {
@@ -72,9 +72,9 @@ class SubsiteProfile
 
     protected static function enable_custom_translations()
     {
-        $locale      = i18n::get_locale();
-        $lang        = i18n::get_lang_from_locale($locale);
-        $profileDir  = self::getProfileDir();
+        $locale = i18n::get_locale();
+        $lang = i18n::get_lang_from_locale($locale);
+        $profileDir = self::getProfileDir();
         $translators = array_reverse(i18n::get_translators(), true);
 
         // Make sure to include base translations
@@ -87,7 +87,7 @@ class SubsiteProfile
 
                 // Load translations from profile
                 $filename = $adapter->getFilenameForLocale($lang);
-                $filepath = Director::baseFolder()."/mysite/lang/".$profileDir.'/'.$filename;
+                $filepath = Director::baseFolder() . "/mysite/lang/" . $profileDir . '/' . $filename;
 
                 if ($filename && !file_exists($filepath)) {
                     continue;
@@ -102,6 +102,11 @@ class SubsiteProfile
     protected static function enable_custom_code()
     {
 
+    }
+
+    public static function clear_profile()
+    {
+        self::$_current_profile = null;
     }
 
     public static function enable($force_profile = null)
