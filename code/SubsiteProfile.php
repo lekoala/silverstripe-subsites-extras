@@ -19,6 +19,22 @@ class SubsiteProfile
     }
 
     /**
+     * Convenience method to change subsite and reenable subsite profile
+     *
+     * @param int $id
+     * @param bool $force Change subsite may not be enough if using session id
+     */
+    public static function changeSubsite($id, $force = false)
+    {
+        if ($force) {
+            $_GET['SubsiteID'] = $id; // This is required otherwise somehow it's not updated
+        }
+        Subsite::changeSubsite($id);
+        self::clear_profile();
+        self::enable();
+    }
+
+    /**
      * @param DataObject $dataobject
      * @param FieldList|array $fields
      */
