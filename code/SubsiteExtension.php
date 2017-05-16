@@ -8,7 +8,8 @@
  */
 class SubsiteExtension extends DataExtension
 {
-    private static $db                        = array(
+
+    private static $db = array(
         'BaseFolder' => 'Varchar(50)',
         'Profile' => 'Varchar(50)'
     );
@@ -21,28 +22,27 @@ class SubsiteExtension extends DataExtension
 
         // Create the base folder
         if (!$this->owner->BaseFolder && $this->owner->Title) {
-            $filter                  = new FileNameFilter();
+            $filter = new FileNameFilter();
             $this->owner->BaseFolder = $filter->filter($this->owner->getTitle());
-            $this->owner->BaseFolder = str_replace(' ', '',
-                ucwords(str_replace('-', ' ', $this->owner->BaseFolder)));
+            $this->owner->BaseFolder = str_replace(' ', '', ucwords(str_replace('-', ' ', $this->owner->BaseFolder)));
         }
 
         // If name has changed, rename existing groups
         $changes = $this->owner->getChangedFields();
         if (isset($changes['Title']) && !empty($changes['Title']['before'])) {
-            $filter    = new URLSegmentFilter();
+            $filter = new URLSegmentFilter();
             $groupName = $this->getAdministratorGroupName($changes['Title']['before']);
-            $group     = self::getGroupByName($groupName);
+            $group = self::getGroupByName($groupName);
             if ($group) {
                 $group->Title = $this->getAdministratorGroupName($changes['Title']['after']);
-                $group->Code  = $filter->filter($group->Title);
+                $group->Code = $filter->filter($group->Title);
                 $group->write();
             }
             $membersGroupName = $this->getMembersGroupName($changes['Title']['before']);
-            $membersGroup     = self::getGroupByName($membersGroupName);
+            $membersGroup = self::getGroupByName($membersGroupName);
             if ($membersGroup) {
                 $membersGroup->Title = $this->getMembersGroupName($changes['Title']['after']);
-                $membersGroup->Code  = $filter->filter($membersGroup->Title);
+                $membersGroup->Code = $filter->filter($membersGroup->Title);
                 $membersGroup->write();
             }
         }
@@ -60,8 +60,7 @@ class SubsiteExtension extends DataExtension
         // Apply the subsite title to config
         $siteconfig = $this->getSiteConfig();
         if ($siteconfig) {
-            if ($siteconfig->Title == _t('Subsite.SiteConfigTitle',
-                    'Your Site Name') && $this->owner->Title) {
+            if ($siteconfig->Title == _t('Subsite.SiteConfigTitle', 'Your Site Name') && $this->owner->Title) {
                 $siteconfig->Title = $this->owner->Title;
                 $siteconfig->write();
             }
@@ -69,19 +68,18 @@ class SubsiteExtension extends DataExtension
 
         // Make sure we have groups for this subsite
         $groupName = $this->getAdministratorGroupName();
-        $group     = self::getGroupByName($groupName);
+        $group = self::getGroupByName($groupName);
         if ($groupName && !$group) {
-            $group                    = new Group();
-            $group->Title             = $groupName;
+            $group = new Group();
+            $group->Title = $groupName;
             $group->AccessAllSubsites = false;
             $group->write();
 
             $group->Subsites()->add($this->owner);
 
             // Apply default permissions to this group
-            $codes               = array_unique(array_keys(Permission::get_codes(false)));
-            $default_permissions = Config::inst()->get('SubsiteExtension',
-                'admin_default_permissions');
+            $codes = array_unique(array_keys(Permission::get_codes(false)));
+            $default_permissions = Config::inst()->get('SubsiteExtension', 'admin_default_permissions');
             foreach ($default_permissions as $p) {
                 if (in_array($p, $codes)) {
                     $po = new Permission(array('Code' => $p));
@@ -93,33 +91,38 @@ class SubsiteExtension extends DataExtension
             $group->write();
         }
 
-        $membersGroupName = $this->getMembersGroupName();
-        $membersGroup     = self::getGroupByName($membersGroupName);
-        if ($membersGroupName && !$membersGroup) {
-            $membersGroup                    = new Group();
-            $membersGroup->Title             = $membersGroupName;
-            $membersGroup->AccessAllSubsites = true;
-            $membersGroup->write();
-
-            $membersGroup->Subsites()->add($this->owner);
-            $membersGroup->write();
+        // Create base folder
+        $folder = $this->getBaseFolderInstance();
+        if ($folder) {
+            $folder->SubsiteID = $this->owner->ID;
+            $folder->write();
         }
+
+
+
+//        $membersGroupName = $this->getMembersGroupName();
+//        $membersGroup = self::getGroupByName($membersGroupName);
+//        if ($membersGroupName && !$membersGroup) {
+//            $membersGroup = new Group();
+//            $membersGroup->Title = $membersGroupName;
+//            $membersGroup->AccessAllSubsites = true;
+//            $membersGroup->write();
+//
+//            $membersGroup->Subsites()->add($this->owner);
+//            $membersGroup->write();
+//        }
     }
 
     public function updateCMSFields(\FieldList $fields)
     {
-        $fields->addFieldToTab('Root.Configuration',
-            new TextField('BaseFolder',
-            _t('SubsiteExtra.BaseFolder', 'Base folder')));
+        $fields->addFieldToTab('Root.Configuration', new TextField('BaseFolder', _t('SubsiteExtra.BaseFolder', 'Base folder')));
 
         // Profiles
         $profiles = ClassInfo::subclassesFor('SubsiteProfile');
         array_shift($profiles);
         if (!empty($profiles)) {
             $profiles = array('' => '') + $profiles;
-            $fields->insertAfter(new DropdownField('Profile',
-                _t('SubsiteExtra.SubsiteProfile', 'Subsite profile'), $profiles),
-                'Title');
+            $fields->insertAfter(new DropdownField('Profile', _t('SubsiteExtra.SubsiteProfile', 'Subsite profile'), $profiles), 'Title');
         }
 
         // Better gridfield
@@ -172,9 +175,8 @@ class SubsiteExtension extends DataExtension
             return false;
         }
         Subsite::$disable_subsite_filter = true;
-        $urlfilter                       = new URLSegmentFilter;
-        $g                               = Group::get()->filter('Code',
-                $urlfilter->filter($name))->first();
+        $urlfilter = new URLSegmentFilter;
+        $g = Group::get()->filter('Code', $urlfilter->filter($name))->first();
         Subsite::$disable_subsite_filter = false;
         return $g;
     }
@@ -193,7 +195,7 @@ class SubsiteExtension extends DataExtension
         if (!$title) {
             return;
         }
-        return 'Administrators '.$title;
+        return 'Administrators ' . $title;
     }
 
     /**
@@ -210,7 +212,20 @@ class SubsiteExtension extends DataExtension
         if (!$title) {
             return;
         }
-        return 'Members '.$title;
+        return 'Members ' . $title;
+    }
+
+    /**
+     * Get base folder instance
+     * 
+     * @return Folder
+     */
+    public function getBaseFolderInstance()
+    {
+        if ($this->owner->BaseFolder) {
+            $folder = Folder::find_or_make($this->owner->BaseFolder);
+            return $folder;
+        }
     }
 
     /**
@@ -227,16 +242,14 @@ class SubsiteExtension extends DataExtension
             return self::$_current_siteconfig_cache[$this->owner->ID];
         }
         Subsite::$disable_subsite_filter = true;
-        $sc                              = SiteConfig::get()->filter('SubsiteID',
-                $this->owner->ID)->first();
+        $sc = SiteConfig::get()->filter('SubsiteID', $this->owner->ID)->first();
         Subsite::$disable_subsite_filter = false;
 
         if (!$sc) {
-            $sc            = new SiteConfig();
+            $sc = new SiteConfig();
             $sc->SubsiteID = $this->owner->ID;
-            $sc->Title     = _t('Subsite.SiteConfigTitle', 'Your Site Name');
-            $sc->Tagline   = _t('Subsite.SiteConfigSubtitle',
-                'Your tagline here');
+            $sc->Title = _t('Subsite.SiteConfigTitle', 'Your Site Name');
+            $sc->Tagline = _t('Subsite.SiteConfigSubtitle', 'Your tagline here');
             $sc->write();
         }
 

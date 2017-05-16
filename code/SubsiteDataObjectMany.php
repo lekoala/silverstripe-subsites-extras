@@ -7,11 +7,12 @@
  */
 class SubsiteDataObjectMany extends DataExtension
 {
+
     private static $_accessible_sites_map_cache = null;
-    private static $db                          = array(
+    private static $db = array(
         'SubsiteList' => 'Varchar(255)' //use as cache to avoid adding lots of overhead
     );
-    private static $many_many                   = array(
+    private static $many_many = array(
         'Subsites' => 'Subsite',
     );
 
@@ -34,7 +35,7 @@ class SubsiteDataObjectMany extends DataExtension
             return array();
         }
         $list = explode(',', $this->owner->SubsiteList);
-        $ids  = array();
+        $ids = array();
         foreach ($list as $l) {
             if ($l == '') {
                 continue;
@@ -65,7 +66,7 @@ class SubsiteDataObjectMany extends DataExtension
         if (Subsite::$disable_subsite_filter) {
             return;
         }
-        if ($dataQuery->getQueryParam('Subsite.filter') === false) {
+        if ($dataQuery && $dataQuery->getQueryParam('Subsite.filter') === false) {
             return;
         }
         if ($ctrl && get_class($ctrl) == 'Security') {
@@ -86,8 +87,8 @@ class SubsiteDataObjectMany extends DataExtension
                 $subsiteID = (int) Subsite::currentSubsiteID();
             }
 
-            $froms     = $query->getFrom();
-            $froms     = array_keys($froms);
+            $froms = $query->getFrom();
+            $froms = array_keys($froms);
             $tableName = array_shift($froms);
 
             if ($subsiteID != 0) {
@@ -103,7 +104,7 @@ class SubsiteDataObjectMany extends DataExtension
             if (!is_object($sub)) {
                 continue;
             }
-            $list .= '#'.$sub->ID.',';
+            $list .= '#' . $sub->ID . ',';
         }
         $this->owner->SubsiteList = $list;
 
@@ -133,7 +134,7 @@ class SubsiteDataObjectMany extends DataExtension
             return;
         }
 
-        $accessibleSubsites    = Subsite::accessible_sites("CMS_ACCESS_CMSMain");
+        $accessibleSubsites = Subsite::accessible_sites("CMS_ACCESS_CMSMain");
         $accessibleSubsitesMap = array();
         if ($accessibleSubsites && $accessibleSubsites->Count()) {
             $accessibleSubsitesMap = $accessibleSubsites->map('ID', 'Title');
@@ -150,11 +151,9 @@ class SubsiteDataObjectMany extends DataExtension
             if (!Permission::check('ADMIN')) {
                 $conf->removeComponentsByType('GridFieldAddNewButton');
             }
-            $grid = new GridField('Subsites', 'Subsites', $currentSubsites,
-                $conf);
+            $grid = new GridField('Subsites', 'Subsites', $currentSubsites, $conf);
             $fields->addFieldToTab('Root.Subsites', $grid);
-            $fields->addFieldToTab('Root.Subsites',
-                new ReadonlyField('SubsiteList'));
+            $fields->addFieldToTab('Root.Subsites', new ReadonlyField('SubsiteList'));
         }
 
         // Profile integration
@@ -166,14 +165,12 @@ class SubsiteDataObjectMany extends DataExtension
         if (!$this->owner->SubsiteID) {
             return false;
         }
-        $sc = DataObject::get_one('SiteConfig',
-                '"SubsiteID" = '.$this->owner->SubsiteID);
+        $sc = DataObject::get_one('SiteConfig', '"SubsiteID" = ' . $this->owner->SubsiteID);
         if (!$sc) {
-            $sc            = new SiteConfig();
+            $sc = new SiteConfig();
             $sc->SubsiteID = $this->owner->SubsiteID;
-            $sc->Title     = _t('Subsite.SiteConfigTitle', 'Your Site Name');
-            $sc->Tagline   = _t('Subsite.SiteConfigSubtitle',
-                'Your tagline here');
+            $sc->Title = _t('Subsite.SiteConfigTitle', 'Your Site Name');
+            $sc->Tagline = _t('Subsite.SiteConfigSubtitle', 'Your tagline here');
             $sc->write();
         }
         return $sc;
@@ -212,8 +209,7 @@ class SubsiteDataObjectMany extends DataExtension
         if ($member->ID == Member::currentUserID()) {
             $goodSites = SubsiteDataObject::accessible_sites_ids();
         } else {
-            $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true,
-                    'all', $member)->column('ID');
+            $goodSites = Subsite::accessible_sites('CMS_ACCESS_CMSMain', true, 'all', $member)->column('ID');
         }
 
 
@@ -248,7 +244,7 @@ class SubsiteDataObjectMany extends DataExtension
      */
     public static function extendedClasses()
     {
-        $classes     = array();
+        $classes = array();
         $dataClasses = ClassInfo::subclassesFor('DataObject');
         array_shift($dataClasses);
         foreach ($dataClasses as $class) {
@@ -269,8 +265,7 @@ class SubsiteDataObjectMany extends DataExtension
         // This helps deal with Link() returning an absolute URL.
         $url = Director::absoluteURL($this->owner->Link());
         if (Subsite::currentSubsiteID()) {
-            $url = preg_replace('/\/\/[^\/]+\//',
-                '//'.Subsite::currentSubsite()->domain().'/', $url);
+            $url = preg_replace('/\/\/[^\/]+\//', '//' . Subsite::currentSubsite()->domain() . '/', $url);
         }
         return $url;
     }
@@ -280,7 +275,7 @@ class SubsiteDataObjectMany extends DataExtension
      */
     public function cacheKeyComponent()
     {
-        return 'subsite-'.str_replace(',', '-', $this->owner->SubsiteList);
+        return 'subsite-' . str_replace(',', '-', $this->owner->SubsiteList);
     }
 
     /**

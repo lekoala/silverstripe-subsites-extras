@@ -23,9 +23,6 @@ Security:
 SubsiteAdmin:
   extensions:
     - SubsiteAdminBackLinkExtension
-AssetAdmin:
-  extensions:
-    - SubsiteAssetAdminExtension
 LeftAndMain:
   extensions:
     - LeftAndMainSubsiteExtension
