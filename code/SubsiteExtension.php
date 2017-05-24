@@ -48,6 +48,15 @@ class SubsiteExtension extends DataExtension
         }
     }
 
+    /**
+     * 3.1 compat layer
+     * @return type
+     */
+    public function getPrimarySubsiteDomain()
+    {
+        return $this->owner->Domains()->sort('"IsPrimary" DESC')->first();
+    }
+
     public function onAfterWrite()
     {
         parent::onAfterWrite();

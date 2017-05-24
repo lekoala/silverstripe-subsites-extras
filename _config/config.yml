@@ -17,6 +17,9 @@ SubsiteExtension:
 Subsite:
   extensions:
     - SubsiteExtension
+SubsiteDomain:
+  extensions:
+    - SubsiteDomainExtension
 Security:
   extensions:
     - SubsiteLoginExtension
