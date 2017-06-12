@@ -11,7 +11,8 @@ class SubsiteExtension extends DataExtension
 
     private static $db = array(
         'BaseFolder' => 'Varchar(50)',
-        'Profile' => 'Varchar(50)'
+        'Profile' => 'Varchar(50)',
+        'RedirectToPrimaryDomain' => 'Boolean',
     );
     private static $admin_default_permissions = array();
     private static $_current_siteconfig_cache = array();
@@ -125,6 +126,7 @@ class SubsiteExtension extends DataExtension
     public function updateCMSFields(\FieldList $fields)
     {
         $fields->addFieldToTab('Root.Configuration', new TextField('BaseFolder', _t('SubsiteExtra.BaseFolder', 'Base folder')));
+        $fields->addFieldToTab('Root.Configuration', new CheckboxField('RedirectToPrimaryDomain', _t('SubsiteExtra.RedirectToPrimaryDomain', 'Redirect to primary domain')));
 
         // Profiles
         $profiles = ClassInfo::subclassesFor('SubsiteProfile');

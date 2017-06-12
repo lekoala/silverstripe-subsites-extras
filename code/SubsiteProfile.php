@@ -144,10 +144,27 @@ class SubsiteProfile
         if (!Subsite::currentSubsiteID()) {
             return;
         }
-        $profile = Subsite::currentSubsite()->Profile;
+        $subsite = Subsite::currentSubsite();
+        $profile = $subsite->Profile;
         if (!$profile) {
             return;
         }
+
+        // Check if redirect is needed
+        if ($subsite->RedirectToPrimaryDomain) {
+            $protocol = Director::protocol();
+            $url = Director::protocolAndHost();
+
+            $currentDomain = str_replace($protocol, '', $url);
+            $primaryDomain = $subsite->getPrimaryDomain();
+
+            if ($currentDomain != $primaryDomain) {
+                header('Location: ' . $subsite->absoluteBaseURL());
+                exit();
+            }
+        }
+
+
         self::$_current_profile = $profile;
 
         $profile::enable_custom_translations();
