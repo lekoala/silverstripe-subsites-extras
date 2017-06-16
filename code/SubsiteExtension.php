@@ -15,7 +15,6 @@ class SubsiteExtension extends DataExtension
         'RedirectToPrimaryDomain' => 'Boolean',
     );
     private static $admin_default_permissions = array();
-    private static $_current_siteconfig_cache = array();
 
     public function onBeforeWrite()
     {
@@ -240,21 +239,31 @@ class SubsiteExtension extends DataExtension
     }
 
     /**
-     * Return a siteconfig for this subsite
+     * Alias for alternateSiteConfig
      *
+     * @deprecated
      * @return \SiteConfig
      */
     public function getSiteConfig()
     {
+        return $this->alternateSiteConfig();
+    }
+
+    /**
+     * Return a SiteConfig for this subsite
+     *
+     * @return \SiteConfig
+     */
+    public function alternateSiteConfig()
+    {
         if (!$this->owner->ID) {
-            return;
+            return SiteConfig::current_site_config();
         }
-        if (isset(self::$_current_siteconfig_cache[$this->owner->ID])) {
-            return self::$_current_siteconfig_cache[$this->owner->ID];
-        }
+
+        $state = Subsite::$disable_subsite_filter;
         Subsite::$disable_subsite_filter = true;
-        $sc = SiteConfig::get()->filter('SubsiteID', $this->owner->ID)->first();
-        Subsite::$disable_subsite_filter = false;
+        $sc = DataObject::get_one('SiteConfig', '"SubsiteID" = ' . $this->owner->ID);
+        Subsite::$disable_subsite_filter = $state;
 
         if (!$sc) {
             $sc = new SiteConfig();
@@ -264,7 +273,6 @@ class SubsiteExtension extends DataExtension
             $sc->write();
         }
 
-        self::$_current_siteconfig_cache[$this->owner->ID] = $sc;
         return $sc;
     }
 }
