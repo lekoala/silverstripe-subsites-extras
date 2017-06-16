@@ -66,9 +66,26 @@ class SubsiteDataObjectSimple extends DataExtension
         return 'subsite-' . Subsite::currentSubsiteID();
     }
 
+    public function updateSummaryFields(&$fields)
+    {
+        $fields['Subsite.Title'] = _t('Subsite.SubsiteTitle', 'Subsite');
+    }
+
     public function updateCMSFields(FieldList $fields)
     {
-        $fields->push(new HiddenField('SubsiteID', 'SubsiteID', Subsite::currentSubsiteID()));
+        if ($this->owner->config()->can_select_subsite) {
+            $Subsite = new DropdownField('SubsiteID', _t('MarketplaceShopSubsite.Subsite', 'Site'), Subsite::get()->map()->toArray());
+            $Subsite->setHasEmptyDefault(true);
+
+            $Title = $fields->dataFieldByName('Title');
+            if ($Title) {
+                $fields->insertBefore($Subsite, 'Title');
+            } else {
+                $fields->push($Subsite);
+            }
+        } else {
+            $fields->push(new HiddenField('SubsiteID', 'SubsiteID', Subsite::currentSubsiteID()));
+        }
     }
 
     /**
