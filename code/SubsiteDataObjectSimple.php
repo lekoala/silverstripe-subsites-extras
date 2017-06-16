@@ -70,4 +70,22 @@ class SubsiteDataObjectSimple extends DataExtension
     {
         $fields->push(new HiddenField('SubsiteID', 'SubsiteID', Subsite::currentSubsiteID()));
     }
+
+    /**
+     * Get the SiteConfig for this object
+     * 
+     * @return SiteConfig
+     */
+    public function alternateSiteConfig()
+    {
+        $sc = DataObject::get_one('SiteConfig', '"SubsiteID" = ' . $this->owner->SubsiteID);
+        if (!$sc) {
+            $sc = new SiteConfig();
+            $sc->SubsiteID = $this->owner->SubsiteID;
+            $sc->Title = _t('Subsite.SiteConfigTitle', 'Your Site Name');
+            $sc->Tagline = _t('Subsite.SiteConfigSubtitle', 'Your tagline here');
+            $sc->write();
+        }
+        return $sc;
+    }
 }
