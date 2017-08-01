@@ -95,6 +95,9 @@ class SubsiteDataObjectSimple extends DataExtension
      */
     public function alternateSiteConfig()
     {
+        if(!$this->owner->SubsiteID) {
+            return SiteConfig::current_site_config();
+        }
         $sc = DataObject::get_one('SiteConfig', '"SubsiteID" = ' . $this->owner->SubsiteID);
         if (!$sc) {
             $sc = new SiteConfig();
