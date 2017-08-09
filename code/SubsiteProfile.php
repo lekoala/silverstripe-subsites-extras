@@ -125,7 +125,7 @@ class SubsiteProfile
         self::$_current_profile = null;
     }
 
-    public static function enable($force_profile = null)
+    public static function enable($force_profile = null, $redirect = true)
     {
         if ($force_profile) {
             self::$_current_profile = $force_profile;
@@ -151,7 +151,7 @@ class SubsiteProfile
         }
 
         // Check if redirect is needed
-        if ($subsite->RedirectToPrimaryDomain) {
+        if ($redirect && $subsite->RedirectToPrimaryDomain) {
             $protocol = Director::protocol();
             $url = Director::protocolAndHost();
 
