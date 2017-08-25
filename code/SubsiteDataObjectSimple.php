@@ -68,13 +68,15 @@ class SubsiteDataObjectSimple extends DataExtension
 
     public function updateSummaryFields(&$fields)
     {
-        $fields['Subsite.Title'] = _t('Subsite.SubsiteTitle', 'Subsite');
+        if (!Subsite::currentSubsiteID()) {
+            $fields['Subsite.Title'] = _t('SubsiteDataObjectSimple.SubsiteTitle', 'Subsite');
+        }
     }
 
     public function updateCMSFields(FieldList $fields)
     {
         if ($this->owner->config()->can_select_subsite) {
-            $Subsite = new DropdownField('SubsiteID', _t('MarketplaceShopSubsite.Subsite', 'Site'), Subsite::get()->map()->toArray());
+            $Subsite = new DropdownField('SubsiteID', _t('SubsiteDataObjectSimple.Subsite', 'Site'), Subsite::get()->map()->toArray());
             $Subsite->setHasEmptyDefault(true);
 
             $Title = $fields->dataFieldByName('Title');
@@ -95,7 +97,7 @@ class SubsiteDataObjectSimple extends DataExtension
      */
     public function alternateSiteConfig()
     {
-        if(!$this->owner->SubsiteID) {
+        if (!$this->owner->SubsiteID) {
             return SiteConfig::current_site_config();
         }
         $sc = DataObject::get_one('SiteConfig', '"SubsiteID" = ' . $this->owner->SubsiteID);
